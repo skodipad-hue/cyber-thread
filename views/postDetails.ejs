@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Post Details</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+tailwind.config = {
+    theme: {
+        extend: {
+            colors: {
+                cyberBg: "#0a0a0f",
+                cyberCard: "#12121a",
+                cyberGlow: "#00f6ff",
+                cyberText: "#e5e7eb",
+                cyberPink: "#ff3cac"
+            },
+            boxShadow: {
+                glow: "0 0 25px rgba(0,246,255,0.25)",
+                glowHover: "0 0 40px rgba(0,246,255,0.45)"
+            }
+        }
+    }
+}
+</script>
+
+</head>
+
+<body class="bg-cyberBg text-cyberText font-mono min-h-screen">
+
+<!-- BACK BUTTON -->
+<a href="/users/<%= post.user_id %>/posts"
+   class="m-6 inline-block px-4 py-2 bg-cyberPink text-white rounded-lg font-bold shadow-glow hover:shadow-glowHover transition">
+    ← Back to Feed
+</a>
+
+<div class="max-w-5xl mx-auto mt-10 bg-cyberCard border border-cyberGlow/20 rounded-xl shadow-glow p-10">
+
+    <!-- USER + POST HEADER -->
+    <div class="flex gap-10">
+
+        <!-- IMAGE -->
+        <div class="w-1/2 bg-cyberBg/40 rounded-xl border border-cyberGlow/20 flex justify-center items-center h-72">
+            <% if (post.url) { %>
+                <img src="<%= post.url %>" class="rounded-lg max-h-72 shadow-lg">
+            <% } else { %>
+                <p class="text-gray-500">No Photo Uploaded</p>
+            <% } %>
+        </div>
+
+        <!-- USER INFO -->
+        <div class="w-1/2">
+            <h1 class="text-3xl font-bold text-cyberGlow">@<%= post.username %></h1>
+            <p class="text-gray-400 text-lg"><%= post.email %></p>
+
+            <p class="mt-4 text-cyberText text-lg">
+                <span class="font-bold text-cyberGlow">Posted: </span> <%= post.timeAgo %>
+            </p>
+
+            <p class="mt-1 text-gray-400 text-sm">
+                <%= post.created_at.toLocaleString() %>
+            </p>
+        </div>
+    </div>
+
+    <!-- POST CONTENT -->
+    <div class="mt-10">
+        <h2 class="text-2xl font-bold text-cyberGlow mb-3">Post Content</h2>
+        <p class="bg-cyberBg/40 p-5 rounded-xl border border-cyberGlow/10 whitespace-pre-wrap leading-relaxed text-gray-300">
+            <%= post.content %>
+        </p>
+    </div>
+
+</div>
+
+</body>
+</html>
