@@ -30,15 +30,7 @@ const imagekit = new ImageKit({
 });
 
 /* ================= DATABASE (FINAL FIX) ================= */
-const db = mysql.createConnection({
-  host: (process.env.MYSQLHOST || "").trim(),
-  user: (process.env.MYSQLUSER || "").trim(),
-  password: (process.env.MYSQLPASSWORD || "").trim(),
-  database: (process.env.MYSQLDATABASE || "").trim(),
-  port: Number((process.env.MYSQLPORT || "").trim()),
-});
-
-/* ---- DB CONNECT CHECK ---- */
+const db = mysql.createConnection(process.env.DATABASE_URL.trim());
 db.connect((err) => {
   if (err) {
     console.error("MySQL connection failed:", err);
