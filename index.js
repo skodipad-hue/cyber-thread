@@ -1,4 +1,4 @@
-// Load env only for local development
+// Load .env ONLY for local development
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
@@ -14,6 +14,7 @@ const path = require("path");
 
 const app = express();
 
+/* ================= MIDDLEWARE ================= */
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.set("view engine", "ejs");
@@ -23,21 +24,21 @@ const upload = multer({ dest: "uploads/" });
 
 /* ================= IMAGEKIT ================= */
 const imagekit = new ImageKit({
-  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+  publicKey: (process.env.IMAGEKIT_PUBLIC_KEY || "").trim(),
+  privateKey: (process.env.IMAGEKIT_PRIVATE_KEY || "").trim(),
+  urlEndpoint: (process.env.IMAGEKIT_URL_ENDPOINT || "").trim(),
 });
 
-/* ================= DATABASE ================= */
+/* ================= DATABASE (FINAL FIX) ================= */
 const db = mysql.createConnection({
-  host: process.env.MYSQLHOST,
-  user: process.env.MYSQLUSER,
-  password: process.env.MYSQLPASSWORD,
-  database: process.env.MYSQLDATABASE,
-  port: process.env.MYSQLPORT,
+  host: (process.env.MYSQLHOST || "").trim(),
+  user: (process.env.MYSQLUSER || "").trim(),
+  password: (process.env.MYSQLPASSWORD || "").trim(),
+  database: (process.env.MYSQLDATABASE || "").trim(),
+  port: Number((process.env.MYSQLPORT || "").trim()),
 });
 
-// DB connection check
+/* ---- DB CONNECT CHECK ---- */
 db.connect((err) => {
   if (err) {
     console.error("MySQL connection failed:", err);
@@ -67,9 +68,9 @@ app.post("/login", (req, res) => {
   db.query(
     "SELECT * FROM users WHERE email=? AND password=?",
     [email, password],
-    (err, user) => {
-      if (!user || !user.length) return res.send("Invalid Login");
-      res.redirect(`/users/${user[0].id}/posts`);
+    (err, users) => {
+      if (!users || !users.length) return res.send("Invalid Login");
+      res.redirect(`/users/${users[0].id}/posts`);
     }
   );
 });
@@ -199,5 +200,5 @@ app.post("/profile/:id", (req, res) => {
 });
 
 /* ================= START SERVER ================= */
-const PORT = process.env.PORT || 8080;
+const PORT = Number((process.env.PORT || "8080").trim());
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
