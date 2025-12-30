@@ -5,86 +5,62 @@
   <title>Post Details</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            cyberBg: "#0a0a0f",
-            cyberCard: "#12121a",
-            cyberGlow: "#00f6ff",
-            cyberText: "#e5e7eb",
-            cyberPink: "#ff3cac"
-          },
-          boxShadow: {
-            glow: "0 0 25px rgba(0,246,255,0.25)",
-            glowHover: "0 0 40px rgba(0,246,255,0.45)"
-          }
-        }
-      }
-    }
-  </script>
 </head>
 
-<body class="bg-cyberBg text-cyberText font-mono min-h-screen">
+<body class="bg-[#0a0a0f] text-gray-200 font-mono min-h-screen">
 
-  <!-- BACK BUTTON -->
-  <a href="/users/<%= post.user_id || '' %>/posts"
-     class="m-6 inline-block px-4 py-2 bg-cyberPink text-white rounded-lg font-bold shadow-glow hover:shadow-glowHover transition">
-      ← Back to Feed
-  </a>
+<a href="/users/<%= post.user_id %>/posts"
+   class="m-6 inline-block px-4 py-2 bg-pink-500 text-white rounded-lg font-bold">
+   ← Back to Feed
+</a>
 
-  <div class="max-w-5xl mx-auto mt-10 bg-cyberCard border border-cyberGlow/20 rounded-xl shadow-glow p-10">
+<div class="max-w-5xl mx-auto bg-[#12121a] border border-cyan-400/20 rounded-xl p-10">
 
-    <!-- USER + POST HEADER -->
-    <div class="flex gap-10">
+  <div class="flex gap-10">
 
-      <!-- IMAGE -->
-      <div class="w-1/2 bg-cyberBg/40 rounded-xl border border-cyberGlow/20 flex justify-center items-center h-72">
-        <% if (post.url && post.url.trim() !== "") { %>
-          <img src="<%= post.url %>" alt="Post Image"
-               class="rounded-lg max-h-72 shadow-lg">
-        <% } else { %>
-          <p class="text-gray-500">No Photo Uploaded</p>
-        <% } %>
-      </div>
+    <!-- POST IMAGE -->
+    <div class="w-1/2 flex items-center justify-center bg-black rounded-xl">
+      <% if (post.url) { %>
+        <img src="<%= post.url %>" class="rounded-lg max-h-72">
+      <% } else { %>
+        <p class="text-gray-500">No Photo Uploaded</p>
+      <% } %>
+    </div>
 
-      <!-- USER INFO -->
-      <div class="w-1/2">
-        <h1 class="text-3xl font-bold text-cyberGlow">
-          @<%= post.username || "unknown" %>
-        </h1>
+    <!-- USER INFO -->
+    <div class="w-1/2">
 
-        <p class="text-gray-400 text-lg">
-          <%= post.email || "no-email@unknown.com" %>
-        </p>
-
-        <p class="mt-4 text-cyberText text-lg">
-          <span class="font-bold text-cyberGlow">Posted: </span>
-          <%= post.timeAgo || "just now" %>
-        </p>
-
-        <p class="mt-1 text-gray-400 text-sm">
-          <% if (post.created_at) { %>
-            <%= new Date(post.created_at).toLocaleString() %>
+      <!-- PROFILE IMAGE -->
+      <div class="flex items-center gap-4 mb-4">
+        <div class="w-16 h-16 rounded-full border border-cyan-400/30 overflow-hidden bg-black flex items-center justify-center">
+          <% if (post.profile_url) { %>
+            <img src="<%= post.profile_url %>" class="w-full h-full object-cover">
           <% } else { %>
-            —
+            <span class="text-gray-500 text-xs">No Image</span>
           <% } %>
-        </p>
+        </div>
+
+        <div>
+          <h1 class="text-2xl text-cyan-400 font-bold">@<%= post.username %></h1>
+          <p class="text-gray-400 text-sm"><%= post.email %></p>
+        </div>
       </div>
-    </div>
 
-    <!-- POST CONTENT -->
-    <div class="mt-10">
-      <h2 class="text-2xl font-bold text-cyberGlow mb-3">Post Content</h2>
-
-      <p class="bg-cyberBg/40 p-5 rounded-xl border border-cyberGlow/10 whitespace-pre-wrap leading-relaxed text-gray-300">
-        <%= post.content || "No content available." %>
+      <p class="text-sm text-gray-400">
+        <%= post.timeAgo %> · <%= new Date(post.created_at).toLocaleString() %>
       </p>
-    </div>
 
+    </div>
   </div>
+
+  <div class="mt-8">
+    <h2 class="text-xl text-cyan-400 mb-2">Post Content</h2>
+    <p class="bg-black p-4 rounded-xl whitespace-pre-wrap">
+      <%= post.content %>
+    </p>
+  </div>
+
+</div>
 
 </body>
 </html>

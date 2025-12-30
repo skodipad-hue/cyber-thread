@@ -208,42 +208,56 @@ app.delete("/posts/:id", (req, res) => {
 app.get("/posts/:id", (req, res) => {
   const postId = req.params.id;
 
-  const query = `
-    SELECT 
-      posts.id,
-      posts.content,
-      posts.url,
-      posts.created_at,
-      posts.user_id,
-      users.username,
-      users.email
-    FROM posts
-    JOIN users ON posts.user_id = users.id
-    WHERE posts.id = ?
-    LIMIT 1
-  `;
+  db.query(
+    `SELECT posts.*, 
+            users.username, 
+            users.email, 
+            users.profile_url
+     FROM posts
+     JOIN users ON posts.user_id = users.id
+     WHERE posts.id=?`,
+    [postId],
+    (err, rows) => {
+      if (err || !rows.length) return res.send("Post not found");
 
-  db.query(query, [postId], (err, rows) => {
-    if (err) {
-      console.error("❌ Error fetching post details:", err);
-      return res.status(500).send("Database error");
+      const post = rows[0];
+      post.timeAgo = timeAgo(post.created_at);
+
+      res.render("postdetails", { post });
     }
+  );
+});
 
-    if (!rows || rows.length === 0) {
-      return res.status(404).send("Post not found");
-    }
 
-    const post = rows[0];
 
-    // SAFETY FIXES
-    post.created_at = post.created_at
-      ? new Date(post.created_at)
-      : new Date();
 
-    post.timeAgo = timeAgo(post.created_at);
+// ================= PROFILE PHOTO UPLOAD =================
+app.post("/profile/:id/photo", upload.single("profileImage"), async (req, res) => {
+  const userId = req.params.id;
 
-    res.render("postDetails", { post });
-  });
+  if (!req.file) {
+    return res.redirect(`/profile/${userId}`);
+  }
+
+  try {
+    const fileData = fs.readFileSync(req.file.path);
+
+    const uploaded = await imagekit.upload({
+      file: fileData,
+      fileName: `profile_${userId}_${Date.now()}`
+    });
+
+    fs.unlinkSync(req.file.path);
+
+    db.query(
+      "UPDATE users SET profile_url=? WHERE id=?",
+      [uploaded.url, userId],
+      () => res.redirect(`/profile/${userId}`)
+    );
+  } catch (err) {
+    console.error(err);
+    res.send("Profile image upload failed");
+  }
 });
 
 
