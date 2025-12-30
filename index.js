@@ -23,26 +23,49 @@ app.set("views", path.join(__dirname, "views"));
 const upload = multer({ dest: "uploads/" });
 
 /* ================= IMAGEKIT ================= */
+if (
+  !process.env.IMAGEKIT_PUBLIC_KEY ||
+  !process.env.IMAGEKIT_PRIVATE_KEY ||
+  !process.env.IMAGEKIT_URL_ENDPOINT
+) {
+  console.error("❌ ImageKit environment variables missing");
+  process.exit(1);
+}
+
 const imagekit = new ImageKit({
-  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+  publicKey: process.env.IMAGEKIT_PUBLIC_KEY.trim(),
+  privateKey: process.env.IMAGEKIT_PRIVATE_KEY.trim(),
+  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT.trim(),
 });
 
-/* ================= DATABASE (RENDER + RAILWAY) ================= */
+/* ================= DATABASE (RENDER + RAILWAY | POOL) ================= */
 if (!process.env.DATABASE_URL) {
   console.error("❌ DATABASE_URL is missing");
   process.exit(1);
 }
 
-const db = mysql.createConnection(process.env.DATABASE_URL);
+/**
+ * IMPORTANT:
+ * - Using CONNECTION POOL (required for Railway / Render)
+ * - No createConnection
+ * - No connect()
+ */
+const db = mysql.createPool({
+  uri: process.env.DATABASE_URL.trim(),
+  waitForConnections: true,
+  connectionLimit: 5,
+  queueLimit: 0,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 10000,
+});
 
-db.connect((err) => {
+// Test pool once at startup
+db.query("SELECT 1", (err) => {
   if (err) {
-    console.error("❌ MySQL connection failed:", err);
+    console.error("❌ MySQL pool connection failed:", err);
     process.exit(1);
   }
-  console.log("✅ MySQL connected (Railway)");
+  console.log("✅ MySQL pool connected (Railway)");
 });
 
 /* ================= TIME AGO ================= */
@@ -67,6 +90,7 @@ app.post("/login", (req, res) => {
     "SELECT * FROM users WHERE email=? AND password=?",
     [email, password],
     (err, users) => {
+      if (err) return res.send("Database error");
       if (!users || !users.length) return res.send("Invalid Login");
       res.redirect(`/users/${users[0].id}/posts`);
     }
@@ -99,6 +123,7 @@ app.get("/users/:id/posts", (req, res) => {
      JOIN users ON posts.user_id = users.id
      ORDER BY posts.created_at DESC`,
     (err, posts) => {
+      if (err) return res.send("Database error");
       posts.forEach((p) => (p.timeAgo = timeAgo(p.created_at)));
       res.render("feed", { posts, userId });
     }
@@ -111,21 +136,25 @@ app.post("/users/:id/posts", upload.single("image"), async (req, res) => {
   const postId = uuidv4();
   let url = null;
 
-  if (req.file) {
-    const fileData = fs.readFileSync(req.file.path);
-    const uploaded = await imagekit.upload({
-      file: fileData,
-      fileName: req.file.originalname,
-    });
-    fs.unlinkSync(req.file.path);
-    url = uploaded.url;
-  }
+  try {
+    if (req.file) {
+      const fileData = fs.readFileSync(req.file.path);
+      const uploaded = await imagekit.upload({
+        file: fileData,
+        fileName: req.file.originalname,
+      });
+      fs.unlinkSync(req.file.path);
+      url = uploaded.url;
+    }
 
-  db.query(
-    "INSERT INTO posts (id, user_id, content, url) VALUES (?, ?, ?, ?)",
-    [postId, userId, req.body.content, url],
-    () => res.redirect(`/profile/${userId}`)
-  );
+    db.query(
+      "INSERT INTO posts (id, user_id, content, url) VALUES (?, ?, ?, ?)",
+      [postId, userId, req.body.content, url],
+      () => res.redirect(`/profile/${userId}`)
+    );
+  } catch (e) {
+    res.send("Image upload failed");
+  }
 });
 
 /* ================= PROFILE ================= */
@@ -133,12 +162,14 @@ app.get("/profile/:id", (req, res) => {
   const id = req.params.id;
 
   db.query("SELECT * FROM users WHERE id=?", [id], (err, users) => {
+    if (err || !users.length) return res.send("User not found");
     const user = users[0];
 
     db.query(
       "SELECT * FROM posts WHERE user_id=? ORDER BY created_at DESC",
       [id],
       (err, posts) => {
+        if (err) return res.send("Database error");
         posts.forEach((p) => (p.timeAgo = timeAgo(p.created_at)));
         res.render("profile", { user, posts });
       }
@@ -147,7 +178,7 @@ app.get("/profile/:id", (req, res) => {
 });
 
 /* ================= START SERVER (RENDER) ================= */
-const PORT = process.env.PORT || 8080;
+const PORT = Number(process.env.PORT || 8080);
 app.listen(PORT, () => {
-  console.log(`Server running on ${PORT}`);
+  console.log(`🚀 Server running on ${PORT}`);
 });
