@@ -24,26 +24,25 @@ const upload = multer({ dest: "uploads/" });
 
 /* ================= IMAGEKIT ================= */
 const imagekit = new ImageKit({
-  publicKey: (process.env.IMAGEKIT_PUBLIC_KEY || "").trim(),
-  privateKey: (process.env.IMAGEKIT_PRIVATE_KEY || "").trim(),
-  urlEndpoint: (process.env.IMAGEKIT_URL_ENDPOINT || "").trim(),
+  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
 });
 
-/* ================= DATABASE (LOCALHOST) ================= */
-const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "saif_2005",       // LOCAL MySQL password
-  database: "cyber_thread",    // LOCAL database name
-  port: 3306,                  // ✅ FIXED
-});
+/* ================= DATABASE (RENDER + RAILWAY) ================= */
+if (!process.env.DATABASE_URL) {
+  console.error("❌ DATABASE_URL is missing");
+  process.exit(1);
+}
+
+const db = mysql.createConnection(process.env.DATABASE_URL);
 
 db.connect((err) => {
   if (err) {
     console.error("❌ MySQL connection failed:", err);
     process.exit(1);
   }
-  console.log("✅ MySQL connected on localhost");
+  console.log("✅ MySQL connected (Railway)");
 });
 
 /* ================= TIME AGO ================= */
@@ -106,26 +105,6 @@ app.get("/users/:id/posts", (req, res) => {
   );
 });
 
-/* ================= POST DETAILS ================= */
-app.get("/posts/:id", (req, res) => {
-  const postId = req.params.id;
-
-  db.query(
-    `SELECT posts.*, users.username, users.email, users.bio,
-            users.created_at AS joined
-     FROM posts
-     JOIN users ON posts.user_id = users.id
-     WHERE posts.id=?`,
-    [postId],
-    (err, rows) => {
-      if (!rows.length) return res.send("Post not found");
-      const post = rows[0];
-      post.timeAgo = timeAgo(post.created_at);
-      res.render("postdetails", { post });
-    }
-  );
-});
-
 /* ================= CREATE POST ================= */
 app.post("/users/:id/posts", upload.single("image"), async (req, res) => {
   const userId = req.params.id;
@@ -149,28 +128,6 @@ app.post("/users/:id/posts", upload.single("image"), async (req, res) => {
   );
 });
 
-/* ================= DELETE POST ================= */
-app.delete("/posts/:id", (req, res) => {
-  const { id } = req.params;
-  const { userId } = req.body;
-
-  db.query("DELETE FROM posts WHERE id=?", [id], () => {
-    res.redirect(`/users/${userId}/posts`);
-  });
-});
-
-/* ================= EDIT POST ================= */
-app.put("/posts/:id", (req, res) => {
-  const { id } = req.params;
-  const { content, userId } = req.body;
-
-  db.query(
-    "UPDATE posts SET content=? WHERE id=?",
-    [content, id],
-    () => res.redirect(`/users/${userId}/posts`)
-  );
-});
-
 /* ================= PROFILE ================= */
 app.get("/profile/:id", (req, res) => {
   const id = req.params.id;
@@ -189,15 +146,8 @@ app.get("/profile/:id", (req, res) => {
   });
 });
 
-/* ================= UPDATE BIO ================= */
-app.post("/profile/:id", (req, res) => {
-  db.query(
-    "UPDATE users SET bio=? WHERE id=?",
-    [req.body.bio, req.params.id],
-    () => res.redirect(`/profile/${req.params.id}`)
-  );
+/* ================= START SERVER (RENDER) ================= */
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`Server running on ${PORT}`);
 });
-
-/* ================= START SERVER ================= */
-const PORT = Number(process.env.PORT || 8080);
-app.listen(PORT, () => console.log(`Server running on ${PORT}`));
