@@ -29,18 +29,23 @@ const imagekit = new ImageKit({
   urlEndpoint: (process.env.IMAGEKIT_URL_ENDPOINT || "").trim(),
 });
 
-/* ================= DATABASE (FINAL FIX) ================= */
-const db = mysql.createConnection(process.env.DATABASE_URL);
+/* ================= DATABASE (LOCALHOST) ================= */
+const db = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "saif_2005",       // LOCAL MySQL password
+  database: "cyber_thread",    // LOCAL database name
+  port: 3306,                  // ✅ FIXED
+});
 
 db.connect((err) => {
   if (err) {
-    console.error("MySQL connection failed:", err);
+    console.error("❌ MySQL connection failed:", err);
     process.exit(1);
   }
-  console.log("MySQL connected");
+  console.log("✅ MySQL connected on localhost");
 });
 
-module.exports = db;
 /* ================= TIME AGO ================= */
 function timeAgo(date) {
   let seconds = Math.floor((new Date() - new Date(date)) / 1000);
@@ -194,5 +199,5 @@ app.post("/profile/:id", (req, res) => {
 });
 
 /* ================= START SERVER ================= */
-const PORT = Number((process.env.PORT || "8080").trim());
+const PORT = Number(process.env.PORT || 8080);
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
