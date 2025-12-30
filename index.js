@@ -107,11 +107,15 @@ app.post("/register", (req, res) => {
     "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
     [username, email, password],
     (err) => {
-      if (err) return res.send("Email already exists");
+      if (err) {
+        console.error("REGISTER ERROR:", err);
+        return res.send(err.sqlMessage || "Database error");
+      }
       res.redirect("/login");
     }
   );
 });
+
 
 /* ================= FEED ================= */
 app.get("/users/:id/posts", (req, res) => {
