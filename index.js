@@ -242,7 +242,7 @@ app.get("/posts/:id", (req, res) => {
 
     post.timeAgo = timeAgo(post.created_at);
 
-    res.render("postdetails", { post });
+    res.render("postDetails", { post });
   });
 });
 
