@@ -30,13 +30,7 @@ const imagekit = new ImageKit({
 });
 
 /* ================= DATABASE (FINAL FIX) ================= */
-const db = mysql.createConnection({
-  host: process.env.MYSQLHOST,
-  user: process.env.MYSQLUSER,
-  password: process.env.MYSQLPASSWORD,
-  database: process.env.MYSQLDATABASE,
-  port: process.env.MYSQLPORT,
-});
+const db = mysql.createConnection(process.env.DATABASE_URL);
 
 db.connect((err) => {
   if (err) {
@@ -46,6 +40,7 @@ db.connect((err) => {
   console.log("MySQL connected");
 });
 
+module.exports = db;
 /* ================= TIME AGO ================= */
 function timeAgo(date) {
   let seconds = Math.floor((new Date() - new Date(date)) / 1000);
