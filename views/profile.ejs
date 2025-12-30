@@ -1,231 +1,95 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Profile</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <style>
-        .drag-area {
-            border: 2px dashed #00f6ff77;
-            padding: 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            text-align: center;
-        }
-        .drag-area.dragover {
-            background-color: #00f6ff22;
-        }
-    </style>
+  <title>Profile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-black text-gray-200 min-h-screen font-mono">
 
 <div class="max-w-2xl mx-auto p-8 mt-6 bg-[#12121a] border border-cyan-400/30 rounded-xl shadow-xl">
 
-    <!-- USER INFO -->
-    <h1 class="text-3xl text-cyan-400 font-bold">@<%= user.username %></h1>
-    <p class="text-gray-400 mb-4"><%= user.email %></p>
+  <h1 class="text-3xl text-cyan-400 font-bold">@<%= user.username %></h1>
+  <p class="text-gray-400 mb-4"><%= user.email %></p>
 
+  <!-- PROFILE IMAGE -->
+  <div class="flex flex-col items-center mb-6">
 
-    <!-- PROFILE IMAGE DISPLAY -->
-<div class="w-28 h-28 rounded-full border border-cyberGlow/30 bg-cyberBg/50 
-            flex items-center justify-center overflow-hidden mb-4">
+    <div class="w-36 h-36 rounded-full border-2 border-cyan-400/40
+                bg-black flex items-center justify-center overflow-hidden shadow-lg">
+      <% if (user.profile_url) { %>
+        <img src="<%= user.profile_url %>" class="w-full h-full object-cover">
+      <% } else { %>
+        <span class="text-gray-500 text-sm">No Profile Image</span>
+      <% } %>
+    </div>
 
-  <% if (user.profile_url && user.profile_url.trim() !== "") { %>
-    <img src="<%= user.profile_url %>"
-         class="w-full h-full object-cover">
+    <!-- UPLOAD -->
+    <form action="/profile/<%= user.id %>/photo"
+          method="POST"
+          enctype="multipart/form-data"
+          class="mt-4 text-center">
+
+      <div id="dropBox"
+           class="border-2 border-dashed border-cyan-400/40
+                  rounded-xl px-6 py-4 cursor-pointer
+                  hover:bg-cyan-400/10 transition">
+        <p class="text-cyan-400 font-bold">Drag & Drop Profile Image</p>
+        <p class="text-gray-400 text-sm">or click to browse</p>
+
+        <input type="file"
+               name="profileImage"
+               id="fileInput"
+               accept="image/*"
+               hidden>
+      </div>
+
+      <button class="mt-3 px-5 py-2 bg-cyan-400 text-black rounded font-bold">
+        Upload Profile Photo
+      </button>
+    </form>
+  </div>
+
+  <!-- BIO -->
+  <% if (!user.bio) { %>
+    <p class="text-red-400 mb-3">No bio added yet</p>
   <% } else { %>
-    <span class="text-gray-500 text-xs">No Profile Image</span>
+    <p class="text-gray-300 mb-3"><%= user.bio %></p>
   <% } %>
+
+  <button onclick="openBioModal()"
+          class="bg-cyan-400 text-black px-4 py-1 rounded font-bold">
+    Edit Bio
+  </button>
+
+  <a href="/users/<%= user.id %>/posts"
+     class="block mt-6 text-cyan-400 underline">
+    ← Back to Feed
+  </a>
 
 </div>
 
-
-    <% if (!user.bio || user.bio.trim() === "") { %>
-        <p class="text-red-400 mb-4">No bio added yet</p>
-        <button onclick="openBioModal()" class="bg-cyan-400 text-black px-4 py-2 rounded font-bold">Add Bio</button>
-    <% } else { %>
-        <p class="mb-4 text-gray-300"><%= user.bio %></p>
-        <button onclick="openBioModal()" class="bg-cyan-400 text-black px-4 py-2 rounded font-bold">Edit Bio</button>
-    <% } %>
-
-    <a href="/users/<%= user.id %>/posts" class="block mt-6 text-cyan-400 underline">← Back to Feed</a>
-
-    <hr class="my-6 border-cyan-400/30">
-
-
-    <!-- UPLOAD PROFILE IMAGE -->
-<form action="/profile/<%= user.id %>/photo"
-      method="POST"
-      enctype="multipart/form-data"
-      class="mt-4">
-
-  <div id="profileDrop"
-       class="border-2 border-dashed border-cyberGlow/40
-              rounded-xl p-4 text-center cursor-pointer
-              hover:bg-cyberGlow/10 transition">
-
-    <p class="text-cyberGlow">Drag & Drop Profile Image</p>
-    <p class="text-gray-400 text-sm">or click to browse</p>
-
-    <input type="file"
-           name="profileImage"
-           id="profileInput"
-           accept="image/*"
-           hidden>
-  </div>
-
-  <button type="submit"
-          class="mt-3 px-4 py-2 bg-cyberGlow text-black
-                 rounded font-bold hover:opacity-80">
-    Upload Profile Photo
-  </button>
-</form>
-
+<!-- DRAG & DROP SCRIPT -->
 <script>
-  const box = document.getElementById("profileDrop");
-  const input = document.getElementById("profileInput");
+  const box = document.getElementById("dropBox");
+  const input = document.getElementById("fileInput");
 
   box.onclick = () => input.click();
 
   box.addEventListener("dragover", e => {
     e.preventDefault();
-    box.classList.add("bg-cyberGlow/10");
+    box.classList.add("bg-cyan-400/10");
   });
 
   box.addEventListener("dragleave", () => {
-    box.classList.remove("bg-cyberGlow/10");
+    box.classList.remove("bg-cyan-400/10");
   });
 
   box.addEventListener("drop", e => {
     e.preventDefault();
     input.files = e.dataTransfer.files;
-    box.classList.remove("bg-cyberGlow/10");
+    box.classList.remove("bg-cyan-400/10");
   });
-</script>
-
-
-    <!-- CREATE POST -->
-    <h2 class="text-xl text-cyan-400 mb-3">Create a Post</h2>
-
-    <form method="POST" action="/users/<%= user.id %>/posts" enctype="multipart/form-data">
-
-        <textarea name="content" class="w-full h-24 bg-black text-white p-3 border border-cyan-400/30 rounded resize-none"
-                  placeholder="Write something..." required></textarea>
-
-        <div id="dragBox" class="drag-area mt-4">
-            <p>Drag & Drop Image</p>
-            <p class="text-gray-400 text-sm">or click to browse</p>
-            <input type="file" name="image" accept="image/*" id="fileInput" class="hidden">
-        </div>
-
-        <button class="mt-4 bg-cyan-400 text-black px-5 py-2 rounded font-bold">Post</button>
-    </form>
-
-    <hr class="my-6 border-cyan-400/30">
-
-    <!-- USER POSTS -->
-    <h2 class="text-xl text-cyan-400 mb-2">Your Posts</h2>
-
-    <% if (!posts || posts.length === 0) { %>
-        <p class="text-gray-400">You have not posted anything yet.</p>
-    <% } %>
-
-    <div class="space-y-6 mt-4">
-        <% posts.forEach(post => { %>
-
-        <div class="bg-[#181820] p-4 rounded-xl border border-cyan-400/20">
-
-            <p class="text-gray-200 whitespace-pre-wrap"><%= post.content %></p>
-
-            <% if (post.url) { %>
-                <img src="<%= post.url %>" class="mt-3 rounded-lg border border-cyan-400/20 shadow-lg">
-            <% } %>
-
-            <small class="text-gray-500 text-sm block mt-1"><%= post.timeAgo %></small>
-
-            <div class="flex gap-3 mt-3">
-
-                <!-- EDIT BUTTON -->
-                <button onclick="openEditModal('<%= post.id %>', `<%= post.content.replace(/`/g, '\\`') %>`)"
-                        class="bg-yellow-400 text-black px-3 py-1 rounded">
-                    Edit
-                </button>
-
-                <!-- DELETE BUTTON -->
-                <form method="POST" action="/posts/<%= post.id %>?_method=DELETE">
-                    <input type="hidden" name="profileId" value="<%= user.id %>">
-                    <button class="bg-red-500 text-black px-3 py-1 rounded"
-                            onclick="return confirm('Delete this post?')">
-                        Delete
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <% }) %>
-    </div>
-
-</div>
-
-<!-- BIO MODAL -->
-<div id="bioModal" class="fixed inset-0 bg-black/70 hidden justify-center items-center">
-    <form method="POST" action="/profile/<%= user.id %>"
-          class="bg-[#12121a] p-6 rounded-xl w-96 border border-cyan-400/30">
-
-        <h2 class="text-xl text-cyan-400 mb-3">Update Bio</h2>
-
-        <textarea name="bio" class="w-full h-24 bg-black text-white p-3 border border-cyan-400/30" required>
-            <%= user.bio || "" %>
-        </textarea>
-
-        <div class="flex justify-between mt-4">
-            <button type="button" onclick="closeBioModal()" class="text-gray-400">Cancel</button>
-            <button class="bg-cyan-400 text-black px-4 py-1 rounded font-bold">Save</button>
-        </div>
-    </form>
-</div>
-
-<!-- EDIT MODAL -->
-<div id="editModal" class="fixed inset-0 bg-black/70 hidden justify-center items-center">
-    <form method="POST" id="editForm" class="bg-[#12121a] p-6 rounded-xl w-96 border border-yellow-400/40">
-
-        <h2 class="text-xl text-yellow-400 mb-3">Edit Post</h2>
-
-        <textarea name="content" id="editContent" class="w-full h-24 bg-black text-white p-3 border border-yellow-400/40" required></textarea>
-
-        <input type="hidden" name="profileId" value="<%= user.id %>">
-
-        <div class="flex justify-between mt-4">
-            <button type="button" onclick="closeEditModal()" class="text-gray-400">Cancel</button>
-            <button class="bg-yellow-400 text-black px-4 py-1 rounded font-bold">Update</button>
-        </div>
-    </form>
-</div>
-
-<script>
-// DRAG & DROP
-dragBox.addEventListener("click", () => fileInput.click());
-dragBox.addEventListener("dragover", e => { e.preventDefault(); dragBox.classList.add("dragover"); });
-dragBox.addEventListener("dragleave", () => dragBox.classList.remove("dragover"));
-dragBox.addEventListener("drop", e => {
-    e.preventDefault();
-    dragBox.classList.remove("dragover");
-    fileInput.files = e.dataTransfer.files;
-    dragBox.querySelector("p").textContent = "Image Selected ✔";
-});
-
-// BIO MODAL
-function openBioModal() { bioModal.classList.replace("hidden", "flex"); }
-function closeBioModal() { bioModal.classList.replace("flex", "hidden"); }
-
-// EDIT MODAL
-function openEditModal(id, content) {
-    editContent.value = content;
-    editForm.action = `/posts/${id}?_method=PUT`;
-    editModal.classList.replace("hidden", "flex");
-}
-function closeEditModal() { editModal.classList.replace("flex", "hidden"); }
 </script>
 
 </body>

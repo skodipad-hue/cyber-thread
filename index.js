@@ -266,6 +266,7 @@ app.get("/posts/:id", (req, res) => {
 //profile photo upload
 
 /* ================= UPDATE PROFILE PHOTO ================= */
+/* ================= UPDATE PROFILE PHOTO ================= */
 app.post(
   "/profile/:id/photo",
   upload.single("profileImage"),
@@ -290,15 +291,10 @@ app.post(
       db.query(
         "UPDATE users SET profile_url=? WHERE id=?",
         [uploaded.url, userId],
-        (err) => {
-          if (err) {
-            console.error("❌ Profile photo update failed:", err);
-          }
-          res.redirect(`/profile/${userId}`);
-        }
+        () => res.redirect(`/profile/${userId}`)
       );
     } catch (err) {
-      console.error("❌ ImageKit error:", err);
+      console.error("❌ Profile image upload failed:", err);
       res.redirect(`/profile/${userId}`);
     }
   }
