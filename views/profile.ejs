@@ -7,16 +7,14 @@
 
 <body class="bg-black text-gray-200 min-h-screen font-mono">
 
-<div class="max-w-2xl mx-auto p-8 mt-6 bg-[#12121a] border border-cyan-400/30 rounded-xl shadow-xl">
+<div class="max-w-3xl mx-auto mt-8 bg-[#12121a] border border-cyan-400/30 rounded-xl shadow-xl p-8">
 
-  <h1 class="text-3xl text-cyan-400 font-bold">@<%= user.username %></h1>
-  <p class="text-gray-400 mb-4"><%= user.email %></p>
-
-  <!-- PROFILE IMAGE -->
+  <!-- USER HEADER -->
   <div class="flex flex-col items-center mb-6">
 
+    <!-- PROFILE IMAGE -->
     <div class="w-36 h-36 rounded-full border-2 border-cyan-400/40
-                bg-black flex items-center justify-center overflow-hidden shadow-lg">
+                bg-black overflow-hidden flex items-center justify-center shadow-lg">
       <% if (user.profile_url) { %>
         <img src="<%= user.profile_url %>" class="w-full h-full object-cover">
       <% } else { %>
@@ -24,22 +22,22 @@
       <% } %>
     </div>
 
-    <!-- UPLOAD -->
+    <!-- UPLOAD PROFILE IMAGE -->
     <form action="/profile/<%= user.id %>/photo"
           method="POST"
           enctype="multipart/form-data"
-          class="mt-4 text-center">
+          class="mt-4 w-full max-w-sm text-center">
 
-      <div id="dropBox"
+      <div id="profileDrop"
            class="border-2 border-dashed border-cyan-400/40
-                  rounded-xl px-6 py-4 cursor-pointer
+                  rounded-xl px-4 py-4 cursor-pointer
                   hover:bg-cyan-400/10 transition">
         <p class="text-cyan-400 font-bold">Drag & Drop Profile Image</p>
         <p class="text-gray-400 text-sm">or click to browse</p>
 
         <input type="file"
                name="profileImage"
-               id="fileInput"
+               id="profileInput"
                accept="image/*"
                hidden>
       </div>
@@ -48,48 +46,131 @@
         Upload Profile Photo
       </button>
     </form>
+
+    <h1 class="text-3xl font-bold text-cyan-400 mt-5">
+      @<%= user.username %>
+    </h1>
+
+    <p class="text-gray-400"><%= user.email %></p>
   </div>
 
   <!-- BIO -->
-  <% if (!user.bio) { %>
-    <p class="text-red-400 mb-3">No bio added yet</p>
-  <% } else { %>
-    <p class="text-gray-300 mb-3"><%= user.bio %></p>
-  <% } %>
+  <div class="mb-6 text-center">
+    <% if (!user.bio) { %>
+      <p class="text-red-400 mb-2">No bio added yet</p>
+    <% } else { %>
+      <p class="text-gray-300 mb-2"><%= user.bio %></p>
+    <% } %>
 
-  <button onclick="openBioModal()"
-          class="bg-cyan-400 text-black px-4 py-1 rounded font-bold">
-    Edit Bio
-  </button>
+    <form action="/profile/<%= user.id %>" method="POST">
+      <textarea name="bio"
+        class="w-full bg-black border border-cyan-400/30 rounded p-2 text-gray-200"
+        placeholder="Update your bio"></textarea>
 
-  <a href="/users/<%= user.id %>/posts"
-     class="block mt-6 text-cyan-400 underline">
-    ← Back to Feed
-  </a>
+      <button class="mt-2 px-4 py-1 bg-cyan-400 text-black rounded font-bold">
+        Save Bio
+      </button>
+    </form>
+  </div>
+
+  <!-- CREATE POST -->
+  <form action="/users/<%= user.id %>/posts"
+        method="POST"
+        enctype="multipart/form-data"
+        class="mb-8">
+
+    <textarea name="content"
+      class="w-full bg-black border border-cyan-400/30 rounded p-3 mb-3 text-gray-200"
+      placeholder="What's on your mind?"
+      required></textarea>
+
+    <div id="postDrop"
+         class="border-2 border-dashed border-cyan-400/40
+                rounded-xl px-4 py-4 cursor-pointer
+                hover:bg-cyan-400/10 transition text-center mb-3">
+      <p class="text-cyan-400 font-bold">Drag & Drop Post Image</p>
+      <p class="text-gray-400 text-sm">or click to browse</p>
+
+      <input type="file"
+             name="image"
+             id="postInput"
+             accept="image/*"
+             hidden>
+    </div>
+
+    <button class="px-6 py-2 bg-cyan-400 text-black rounded font-bold">
+      Post
+    </button>
+  </form>
+
+  <!-- POSTS LIST -->
+  <% posts.forEach(post => { %>
+    <div class="bg-black/40 border border-cyan-400/20 rounded-xl p-4 mb-5">
+
+      <p class="text-gray-300 mb-2 whitespace-pre-wrap">
+        <%= post.content %>
+      </p>
+
+      <% if (post.url) { %>
+        <img src="<%= post.url %>"
+             class="rounded-lg mb-3 max-h-64 shadow">
+      <% } %>
+
+      <p class="text-gray-500 text-sm mb-2">
+        <%= post.timeAgo %>
+      </p>
+
+      <!-- EDIT -->
+      <form action="/posts/<%= post.id %>?_method=PUT" method="POST" class="mb-2">
+        <input type="hidden" name="userId" value="<%= user.id %>">
+        <textarea name="content"
+          class="w-full bg-black border border-cyan-400/20 rounded p-2 text-gray-200">
+          <%= post.content %>
+        </textarea>
+        <button class="mt-1 px-3 py-1 bg-yellow-400 text-black rounded font-bold">
+          Edit
+        </button>
+      </form>
+
+      <!-- DELETE -->
+      <form action="/posts/<%= post.id %>?_method=DELETE" method="POST">
+        <input type="hidden" name="userId" value="<%= user.id %>">
+        <button class="px-3 py-1 bg-red-500 text-white rounded font-bold">
+          Delete
+        </button>
+      </form>
+
+    </div>
+  <% }) %>
 
 </div>
 
-<!-- DRAG & DROP SCRIPT -->
+<!-- DRAG & DROP SCRIPTS -->
 <script>
-  const box = document.getElementById("dropBox");
-  const input = document.getElementById("fileInput");
+  function setupDrag(boxId, inputId) {
+    const box = document.getElementById(boxId);
+    const input = document.getElementById(inputId);
 
-  box.onclick = () => input.click();
+    box.onclick = () => input.click();
 
-  box.addEventListener("dragover", e => {
-    e.preventDefault();
-    box.classList.add("bg-cyan-400/10");
-  });
+    box.addEventListener("dragover", e => {
+      e.preventDefault();
+      box.classList.add("bg-cyan-400/10");
+    });
 
-  box.addEventListener("dragleave", () => {
-    box.classList.remove("bg-cyan-400/10");
-  });
+    box.addEventListener("dragleave", () => {
+      box.classList.remove("bg-cyan-400/10");
+    });
 
-  box.addEventListener("drop", e => {
-    e.preventDefault();
-    input.files = e.dataTransfer.files;
-    box.classList.remove("bg-cyan-400/10");
-  });
+    box.addEventListener("drop", e => {
+      e.preventDefault();
+      input.files = e.dataTransfer.files;
+      box.classList.remove("bg-cyan-400/10");
+    });
+  }
+
+  setupDrag("profileDrop", "profileInput");
+  setupDrag("postDrop", "postInput");
 </script>
 
 </body>
