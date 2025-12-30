@@ -204,39 +204,48 @@ app.delete("/posts/:id", (req, res) => {
 //post details page 
 
 /* ================= POST DETAILS ================= */
+/* ================= POST DETAILS ================= */
 app.get("/posts/:id", (req, res) => {
   const postId = req.params.id;
 
   const query = `
     SELECT 
       posts.id,
-      posts.user_id,
       posts.content,
       posts.url,
       posts.created_at,
+      posts.user_id,
       users.username,
       users.email
     FROM posts
     JOIN users ON posts.user_id = users.id
     WHERE posts.id = ?
+    LIMIT 1
   `;
 
   db.query(query, [postId], (err, rows) => {
     if (err) {
-      console.error("❌ Error fetching post:", err);
+      console.error("❌ Error fetching post details:", err);
       return res.status(500).send("Database error");
     }
 
-    if (!rows.length) {
+    if (!rows || rows.length === 0) {
       return res.status(404).send("Post not found");
     }
 
     const post = rows[0];
+
+    // SAFETY FIXES
+    post.created_at = post.created_at
+      ? new Date(post.created_at)
+      : new Date();
+
     post.timeAgo = timeAgo(post.created_at);
 
     res.render("postdetails", { post });
   });
 });
+
 
 
 

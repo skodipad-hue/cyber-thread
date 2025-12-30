@@ -60,7 +60,8 @@ tailwind.config = {
             </p>
 
             <p class="mt-1 text-gray-400 text-sm">
-                <%= post.created_at.toLocaleString() %>
+                <%= new Date(post.created_at).toLocaleString() %>
+
             </p>
         </div>
     </div>
