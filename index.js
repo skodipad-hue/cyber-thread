@@ -47,14 +47,22 @@ db.query("SELECT 1", (err) => {
 
 /* ================= HELPERS ================= */
 function timeAgo(date) {
-  const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+  if (!date) return "just now";
+
+  const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
+
   if (seconds < 60) return "just now";
+
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes} min ago`;
+  if (minutes < 60) return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} hr ago`;
-  return `${Math.floor(hours / 24)} days ago`;
+  if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+
+  const days = Math.floor(hours / 24);
+  return `${days} day${days > 1 ? "s" : ""} ago`;
 }
+
 
 /* ================= LOGIN ================= */
 app.get("/", (req, res) => res.redirect("/login"));
@@ -151,6 +159,94 @@ app.post("/profile/:id", (req, res) => {
     () => res.redirect(`/profile/${userId}`)
   );
 });
+
+//edit route in profile
+
+app.put("/posts/:id", (req, res) => {
+  const { id } = req.params;
+  const { content, userId } = req.body;
+
+  db.query(
+    "UPDATE posts SET content=? WHERE id=?",
+    [content, id],
+    (err) => {
+      if (err) {
+        console.error(err);
+        return res.send("Edit failed");
+      }
+      res.redirect(`/users/${userId}/posts`);
+    }
+  );
+});
+
+
+
+//delete route in profile
+
+app.delete("/posts/:id", (req, res) => {
+  const { id } = req.params;
+  const { userId } = req.body;
+
+  db.query(
+    "DELETE FROM posts WHERE id=?",
+    [id],
+    (err) => {
+      if (err) {
+        console.error(err);
+        return res.send("Delete failed");
+      }
+      res.redirect(`/users/${userId}/posts`);
+    }
+  );
+});
+
+
+//post details page 
+
+/* ================= POST DETAILS ================= */
+app.get("/posts/:id", (req, res) => {
+  const postId = req.params.id;
+
+  const query = `
+    SELECT 
+      posts.id,
+      posts.user_id,
+      posts.content,
+      posts.url,
+      posts.created_at,
+      users.username,
+      users.email
+    FROM posts
+    JOIN users ON posts.user_id = users.id
+    WHERE posts.id = ?
+  `;
+
+  db.query(query, [postId], (err, rows) => {
+    if (err) {
+      console.error("❌ Error fetching post:", err);
+      return res.status(500).send("Database error");
+    }
+
+    if (!rows.length) {
+      return res.status(404).send("Post not found");
+    }
+
+    const post = rows[0];
+    post.timeAgo = timeAgo(post.created_at);
+
+    res.render("postdetails", { post });
+  });
+});
+
+
+
+
+
+
+
+
+
+
 
 /* ================= START SERVER ================= */
 const PORT = process.env.PORT || 8080;
