@@ -12,7 +12,7 @@ tailwind.config = {
   theme: {
     extend: {
       colors: {
-        /* LIGHT (unchanged) */
+        /* LIGHT */
         twitterBg: "#f5f9fc",
         twitterCard: "#ffffff",
         twitterBorder: "#e5eff6",
@@ -40,19 +40,23 @@ tailwind.config = {
 <header class="bg-white dark:bg-darkBg border-b border-twitterBorder dark:border-darkBorder">
   <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
-    <!-- LEFT -->
+    <!-- LEFT: LOGOUT (RED BUTTON) -->
     <a href="/login"
-       class="text-red-500 font-semibold hover:underline">
+       class="px-4 py-2
+              bg-red-500 text-white
+              rounded-full font-semibold
+              hover:bg-red-400
+              transition">
       Logout
     </a>
 
-    <!-- CENTER -->
+    <!-- CENTER: TITLE + THEME TOGGLE -->
     <div class="flex items-center gap-4">
       <h1 class="text-xl font-bold text-twitterBlue">
         Cyber Threads
       </h1>
 
-      <!-- THEME TOGGLE (CENTERED) -->
+      <!-- THEME TOGGLE -->
       <button id="themeToggle"
         class="p-2 rounded-full
                hover:bg-twitterHover
@@ -63,9 +67,13 @@ tailwind.config = {
       </button>
     </div>
 
-    <!-- RIGHT -->
+    <!-- RIGHT: PROFILE (TWITTER BUTTON) -->
     <a href="/profile/<%= userId %>"
-       class="text-twitterBlue font-semibold hover:underline">
+       class="px-4 py-2
+              bg-twitterBlue text-white
+              rounded-full font-semibold
+              hover:bg-[#1a8cd8]
+              transition">
       Profile
     </a>
 
@@ -131,7 +139,6 @@ tailwind.config = {
   const sun = document.getElementById("sun");
   const moon = document.getElementById("moon");
 
-  // Load saved theme
   if (localStorage.theme === "dark") {
     html.classList.add("dark");
     sun.classList.add("hidden");
