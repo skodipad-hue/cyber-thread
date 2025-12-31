@@ -52,7 +52,188 @@ function timeAgo(date) {
   // Force ISO format for MySQL DATETIME
   const postTime = new Date(
     typeof date === "string" ? date.replace(" ", "T") : date
+  );// Load .env ONLY for local development
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
+
+const express = require("express");
+const mysql = require("mysql2");
+const multer = require("multer");
+const fs = require("fs");
+const methodOverride = require("method-override");
+const ImageKit = require("imagekit");
+const { v4: uuidv4 } = require("uuid");
+const path = require("path");
+
+const app = express();
+
+/* ================= MIDDLEWARE ================= */
+app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
+const upload = multer({ dest: "uploads/" });
+
+/* ================= IMAGEKIT (PROFILE ONLY) ================= */
+const imagekit = new ImageKit({
+  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+});
+
+/* ================= DATABASE ================= */
+const db = mysql.createPool({
+  uri: process.env.DATABASE_URL,
+  waitForConnections: true,
+  connectionLimit: 5,
+  enableKeepAlive: true,
+});
+
+db.query("SELECT 1", (err) => {
+  if (err) {
+    console.error("❌ MySQL error:", err);
+    process.exit(1);
+  }
+  console.log("✅ MySQL connected");
+});
+
+/* ================= HELPERS ================= */
+function timeAgo(date) {
+  if (!date) return "just now";
+
+  const postTime = new Date(
+    typeof date === "string" ? date.replace(" ", "T") : date
   );
+
+  if (isNaN(postTime.getTime())) return "just now";
+
+  let seconds = Math.floor((Date.now() - postTime.getTime()) / 1000);
+  if (seconds < 0) seconds = Math.abs(seconds);
+  if (seconds < 60) return "just now";
+
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes} minute${minutes !== 1 ? "s" : ""} ago`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} hour${hours !== 1 ? "s" : ""} ago`;
+
+  const days = Math.floor(hours / 24);
+  return `${days} day${days !== 1 ? "s" : ""} ago`;
+}
+
+/* ================= AUTH ================= */
+app.get("/", (req, res) => res.redirect("/login"));
+app.get("/login", (req, res) => res.render("loginPage"));
+
+app.post("/login", (req, res) => {
+  const { email, password } = req.body;
+
+  db.query(
+    "SELECT * FROM users WHERE email=? AND password=?",
+    [email, password],
+    (err, users) => {
+      if (err || !users.length) return res.send("Invalid login");
+      res.redirect(`/users/${users[0].id}/posts`);
+    }
+  );
+});
+
+/* ================= REGISTER ================= */
+app.get("/new-guy-page", (req, res) => res.render("register"));
+
+app.post("/register", (req, res) => {
+  const { username, email, password } = req.body;
+
+  db.query(
+    "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
+    [username, email, password],
+    (err) => {
+      if (err) return res.send(err.sqlMessage);
+      res.redirect("/login");
+    }
+  );
+});
+
+/* ================= FEED ================= */
+app.get("/users/:id/posts", (req, res) => {
+  const userId = req.params.id;
+
+  db.query(
+    `SELECT posts.*, users.username
+     FROM posts
+     JOIN users ON posts.user_id = users.id
+     ORDER BY posts.created_at DESC`,
+    (err, posts) => {
+      if (err) return res.status(500).send("Database error");
+
+      posts.forEach(p => {
+        p.timeAgo = timeAgo(p.created_at);
+      });
+
+      res.render("feed", { posts, userId });
+    }
+  );
+});
+
+/* ================= CREATE POST (TEXT ONLY – FIXED TIME) ================= */
+app.post("/users/:id/posts", (req, res) => {
+  const postId = uuidv4();
+  const userId = req.params.id;
+  const createdAt = new Date(); // ✅ CRITICAL FIX
+
+  db.query(
+    "INSERT INTO posts (id, user_id, content, created_at) VALUES (?, ?, ?, ?)",
+    [postId, userId, req.body.content, createdAt],
+    (err) => {
+      if (err) {
+        console.error("❌ Post insert error:", err);
+        return res.status(500).send("Post creation failed");
+      }
+      res.redirect(`/users/${userId}/posts`);
+    }
+  );
+});
+
+/* ================= PROFILE ================= */
+app.get("/profile/:id", (req, res) => {
+  const userId = req.params.id;
+
+  db.query(
+    "SELECT id, username, email, bio, profile_url FROM users WHERE id=?",
+    [userId],
+    (err, users) => {
+      if (err || !users.length) return res.status(404).send("User not found");
+
+      const user = users[0];
+
+      db.query(
+        "SELECT * FROM posts WHERE user_id=? ORDER BY created_at DESC",
+        [userId],
+        (err, posts) => {
+          posts.forEach(p => p.timeAgo = timeAgo(p.created_at));
+          res.render("profile", { user, posts });
+        }
+      );
+    }
+  );
+});
+
+/* ================= UPDATE BIO ================= */
+app.post("/profile/:id", (req, res) => {
+  const userId = req.params.id;
+
+  db.query(
+    "UPDATE users SET bio=? WHERE id=?",
+    [req.body.bio, userId],
+    () => res.redirect(`/profile/${userId}`)
+  );
+});
+
+/* ================= EDIT POST ================= */
+app.put("/posts/:id"
+
 
   if (isNaN(postTime.getTime())) return "just now";
 
