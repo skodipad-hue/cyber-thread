@@ -7,13 +7,20 @@
 
 <body class="bg-black text-gray-200 min-h-screen font-mono">
 
-<div class="max-w-3xl mx-auto mt-8 bg-[#12121a] border border-cyan-400/30 rounded-xl shadow-xl p-8">
+<!-- BACK TO FEED -->
+<a href="/users/<%= user.id %>/posts"
+   class="fixed top-6 left-6 px-4 py-2 bg-pink-500 text-white
+          rounded-lg font-bold shadow-lg hover:bg-pink-600 transition">
+  ← Back to Feed
+</a>
+
+<div class="max-w-3xl mx-auto mt-16 bg-[#12121a] border border-cyan-400/30 rounded-xl shadow-xl p-8">
 
   <!-- USER HEADER -->
-  <div class="flex flex-col items-center mb-6">
+  <div class="flex flex-col items-center mb-8">
 
     <!-- PROFILE IMAGE -->
-    <div class="w-36 h-36 rounded-full border-2 border-cyan-400/40
+    <div class="w-40 h-40 rounded-full border-2 border-cyan-400/40
                 bg-black overflow-hidden flex items-center justify-center shadow-lg">
       <% if (user.profile_url) { %>
         <img src="<%= user.profile_url %>" class="w-full h-full object-cover">
@@ -22,7 +29,7 @@
       <% } %>
     </div>
 
-    <!-- UPLOAD PROFILE IMAGE -->
+    <!-- UPLOAD PROFILE IMAGE (DRAG & DROP KEPT) -->
     <form action="/profile/<%= user.id %>/photo"
           method="POST"
           enctype="multipart/form-data"
@@ -42,12 +49,12 @@
                hidden>
       </div>
 
-      <button class="mt-3 px-5 py-2 bg-cyan-400 text-black rounded font-bold">
+      <button class="mt-3 px-6 py-2 bg-cyan-400 text-black rounded font-bold">
         Upload Profile Photo
       </button>
     </form>
 
-    <h1 class="text-3xl font-bold text-cyan-400 mt-5">
+    <h1 class="text-3xl font-bold text-cyan-400 mt-6">
       @<%= user.username %>
     </h1>
 
@@ -55,7 +62,7 @@
   </div>
 
   <!-- BIO -->
-  <div class="mb-6 text-center">
+  <div class="mb-8 text-center">
     <% if (!user.bio) { %>
       <p class="text-red-400 mb-2">No bio added yet</p>
     <% } else { %>
@@ -73,30 +80,22 @@
     </form>
   </div>
 
-  <!-- CREATE POST -->
+  <!-- CREATE POST (IMAGE DRAG & DROP REMOVED) -->
   <form action="/users/<%= user.id %>/posts"
         method="POST"
         enctype="multipart/form-data"
-        class="mb-8">
+        class="mb-10">
 
     <textarea name="content"
       class="w-full bg-black border border-cyan-400/30 rounded p-3 mb-3 text-gray-200"
       placeholder="What's on your mind?"
       required></textarea>
 
-    <div id="postDrop"
-         class="border-2 border-dashed border-cyan-400/40
-                rounded-xl px-4 py-4 cursor-pointer
-                hover:bg-cyan-400/10 transition text-center mb-3">
-      <p class="text-cyan-400 font-bold">Drag & Drop Post Image</p>
-      <p class="text-gray-400 text-sm">or click to browse</p>
-
-      <input type="file"
-             name="image"
-             id="postInput"
-             accept="image/*"
-             hidden>
-    </div>
+    <!-- OPTIONAL: SIMPLE FILE INPUT (NO DRAG & DROP) -->
+    <input type="file"
+           name="image"
+           accept="image/*"
+           class="mb-3 text-gray-300">
 
     <button class="px-6 py-2 bg-cyan-400 text-black rounded font-bold">
       Post
@@ -105,7 +104,7 @@
 
   <!-- POSTS LIST -->
   <% posts.forEach(post => { %>
-    <div class="bg-black/40 border border-cyan-400/20 rounded-xl p-4 mb-5">
+    <div class="bg-black/40 border border-cyan-400/20 rounded-xl p-4 mb-6">
 
       <p class="text-gray-300 mb-2 whitespace-pre-wrap">
         <%= post.content %>
@@ -116,7 +115,7 @@
              class="rounded-lg mb-3 max-h-64 shadow">
       <% } %>
 
-      <p class="text-gray-500 text-sm mb-2">
+      <p class="text-gray-500 text-sm mb-3">
         <%= post.timeAgo %>
       </p>
 
@@ -125,7 +124,7 @@
         <input type="hidden" name="userId" value="<%= user.id %>">
         <textarea name="content"
           class="w-full bg-black border border-cyan-400/20 rounded p-2 text-gray-200">
-          <%= post.content %>
+<%= post.content %>
         </textarea>
         <button class="mt-1 px-3 py-1 bg-yellow-400 text-black rounded font-bold">
           Edit
@@ -145,7 +144,7 @@
 
 </div>
 
-<!-- DRAG & DROP SCRIPTS -->
+<!-- DRAG & DROP SCRIPT (PROFILE ONLY) -->
 <script>
   function setupDrag(boxId, inputId) {
     const box = document.getElementById(boxId);
@@ -170,7 +169,6 @@
   }
 
   setupDrag("profileDrop", "profileInput");
-  setupDrag("postDrop", "postInput");
 </script>
 
 </body>
