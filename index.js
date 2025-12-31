@@ -51,12 +51,10 @@ function timeAgo(date) {
 
   const postTime = new Date(date);
 
-  // If date is invalid
   if (isNaN(postTime.getTime())) return "just now";
 
   let seconds = Math.floor((Date.now() - postTime.getTime()) / 1000);
 
-  // Handle future timestamps / timezone issues
   if (seconds < 0) seconds = Math.abs(seconds);
 
   if (seconds < 60) return "just now";
@@ -72,7 +70,6 @@ function timeAgo(date) {
   const days = Math.floor(hours / 24);
   return `${days} day${days !== 1 ? "s" : ""} ago`;
 }
-
 
 
 /* ================= LOGIN ================= */

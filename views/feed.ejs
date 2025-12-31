@@ -31,7 +31,6 @@ tailwind.config = {
 
 <!-- HEADER -->
 <header class="flex justify-between items-center p-6 border-b border-cyberGlow/30 bg-cyberCard shadow-glow">
-
     <a href="/login"
        class="px-4 py-2 bg-red-500 text-black rounded-lg font-bold hover:bg-red-400 transition">
         Logout
@@ -60,7 +59,7 @@ tailwind.config = {
        class="block transform hover:scale-[1.03] transition-all duration-300">
 
         <div class="bg-cyberCard rounded-xl border border-cyberGlow/20 shadow-glow
-                    hover:shadow-glowHover p-5 transition-all duration-300">
+                    hover:shadow-glowHover px-3 py-4 transition-all duration-300">
 
             <!-- USER + TIME -->
             <div class="flex justify-between items-center">
@@ -68,11 +67,11 @@ tailwind.config = {
                     @<%= post.username %>
                 </h3>
                 <small class="text-gray-400 text-xs">
-                    <%= post.timeAgo %>
+                    <%= timeAgo(post.createdAt) %>
                 </small>
             </div>
 
-            <!-- POST CONTENT (FIXED ALIGNMENT) -->
+            <!-- POST CONTENT -->
             <p class="mt-3 w-full text-left text-gray-300 whitespace-pre-wrap leading-relaxed break-words">
                 <%= post.content %>
             </p>
