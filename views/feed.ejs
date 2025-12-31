@@ -12,7 +12,6 @@ tailwind.config = {
   theme: {
     extend: {
       colors: {
-        /* LIGHT */
         twitterBg: "#f5f9fc",
         twitterCard: "#ffffff",
         twitterBorder: "#e5eff6",
@@ -21,7 +20,6 @@ tailwind.config = {
         twitterText: "#0f172a",
         twitterMuted: "#64748b",
 
-        /* DARK (graphite blue) */
         darkBg: "#0f1419",
         darkCard: "#161b22",
         darkBorder: "#232a31",
@@ -40,44 +38,45 @@ tailwind.config = {
 <header class="bg-white dark:bg-darkBg border-b border-twitterBorder dark:border-darkBorder">
   <div
     class="max-w-7xl mx-auto
-           px-4 sm:px-6
-           py-5 sm:py-4
-           flex flex-col gap-5
+           px-[18px] sm:px-6
+           py-[22px] sm:py-4
+           flex flex-col gap-[18px]
            sm:flex-row sm:items-center sm:justify-between">
 
-    <!-- LEFT: LOGOUT -->
+    <!-- LOGOUT (MOBILE BIG) -->
     <a href="/login"
        class="self-start sm:self-auto
-              px-5 py-3 sm:px-4 sm:py-2
-              text-base sm:text-sm
+              px-[22px] py-[14px]
+              sm:px-4 sm:py-2
+              text-[16px] sm:text-sm
               bg-red-500 text-white
               rounded-full font-semibold
-              hover:bg-red-400
-              transition">
+              hover:bg-red-400 transition">
       Logout
     </a>
 
-    <!-- CENTER: TITLE + THEME TOGGLE -->
-    <div class="flex items-center justify-center gap-4">
-      <h1 class="text-2xl sm:text-xl font-bold text-twitterBlue uppercase">
+    <!-- CENTER -->
+    <div class="flex items-center justify-center gap-[14px]">
+      <h1 class="text-[28px] sm:text-xl font-bold text-twitterBlue uppercase tracking-wide">
         CYBER THREADS
       </h1>
 
       <button id="themeToggle"
-        class="p-3 sm:p-2 rounded-full
+        class="p-[10px] sm:p-2 rounded-full
                hover:bg-twitterHover
                dark:hover:bg-white/10
                transition">
-        <span id="sun" class="text-xl sm:text-lg">☀️</span>
-        <span id="moon" class="text-xl sm:text-lg hidden">🌙</span>
+        <span id="sun" class="text-[22px] sm:text-lg">☀️</span>
+        <span id="moon" class="text-[22px] sm:text-lg hidden">🌙</span>
       </button>
     </div>
 
-    <!-- RIGHT: PROFILE -->
+    <!-- PROFILE (MOBILE BIG) -->
     <a href="/profile/<%= userId %>"
        class="self-end sm:self-auto
-              px-5 py-3 sm:px-4 sm:py-2
-              text-base sm:text-sm
+              px-[22px] py-[14px]
+              sm:px-4 sm:py-2
+              text-[16px] sm:text-sm
               bg-twitterBlue text-white
               rounded-full font-semibold
               hover:bg-[#1a8cd8]
@@ -90,46 +89,47 @@ tailwind.config = {
 
 <!-- FEED -->
 <section
-  class="max-w-7xl mx-auto mt-6
-         px-4 sm:px-6
+  class="max-w-7xl mx-auto mt-[18px]
+         px-[18px] sm:px-6
          pb-20
          flex flex-wrap
-         gap-5 sm:gap-6
+         gap-[18px] sm:gap-6
          justify-start items-start">
 
   <% if (!posts || posts.length === 0) { %>
-    <p class="w-full text-center text-twitterMuted dark:text-darkMuted">
+    <p class="w-full text-center text-twitterMuted dark:text-darkMuted text-[16px]">
       No posts yet.
     </p>
   <% } %>
 
   <% posts.forEach(post => { %>
 
-  <!-- POST CARD -->
+  <!-- POST CARD (ONE PER ROW ON PHONE) -->
   <div class="w-full sm:w-[48%] lg:w-[31%]">
 
     <div
       class="bg-twitterCard dark:bg-darkCard
              border border-twitterBorder dark:border-darkBorder
-             rounded-2xl
-             shadow-sm hover:shadow-md
-             transition">
+             rounded-[18px]
+             shadow-sm hover:shadow-md transition">
 
       <a href="/posts/<%= post.id %>" class="block w-full text-left">
 
-        <!-- HEADER -->
-        <div class="flex justify-between items-start px-5 pt-4 pb-2">
-          <h3 class="font-semibold text-base sm:text-sm">
+        <!-- POST HEADER -->
+        <div class="flex justify-between items-start px-[18px] pt-[16px] pb-[10px]">
+          <h3 class="font-semibold text-[17px] sm:text-sm">
             @<%= post.username %>
           </h3>
-          <small class="text-twitterMuted dark:text-darkMuted text-xs whitespace-nowrap">
+          <small class="text-twitterMuted dark:text-darkMuted text-[13px] whitespace-nowrap">
             <%= post.timeAgo %>
           </small>
         </div>
 
-        <!-- CONTENT -->
-        <div class="px-5 pb-5 pt-1">
-          <p class="text-[16px] sm:text-[15px] leading-relaxed break-words">
+        <!-- POST CONTENT -->
+        <div class="px-[18px] pb-[18px] pt-[6px]">
+          <p class="text-[18px] sm:text-[15px]
+                    leading-[26px] sm:leading-relaxed
+                    break-words">
             <%= post.content %>
           </p>
         </div>
