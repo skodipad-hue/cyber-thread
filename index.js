@@ -177,15 +177,20 @@ app.put("/posts/:id", (req, res) => {
 });
 
 /* ================= DELETE POST ================= */
+/* ================= DELETE POST (NO REDIRECT) ================= */
 app.delete("/posts/:id", (req, res) => {
-  const { userId } = req.body;
-
   db.query(
     "DELETE FROM posts WHERE id=?",
     [req.params.id],
-    () => res.redirect(`/users/${userId}/posts`)
+    (err) => {
+      if (err) {
+        return res.status(500).json({ success: false });
+      }
+      res.json({ success: true });
+    }
   );
 });
+
 
 /* ================= POST DETAILS ================= */
 app.get("/posts/:id", (req, res) => {

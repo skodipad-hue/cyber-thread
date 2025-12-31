@@ -28,7 +28,6 @@ tailwind.config = {
 
 <body class="bg-cyberBg text-cyberText font-mono min-h-screen">
 
-<!-- HEADER -->
 <header class="flex justify-between items-center p-6 border-b border-cyberGlow/30 bg-cyberCard shadow-glow">
   <a href="/login" class="px-4 py-2 bg-red-500 text-black rounded-lg font-bold">
     Logout
@@ -43,27 +42,22 @@ tailwind.config = {
   </a>
 </header>
 
-<!-- FEED FLEX CONTAINER -->
 <section
   class="max-w-7xl mx-auto mt-10 px-6 pb-20
          flex flex-wrap gap-8 justify-start items-start">
 
-  <% if (!posts || posts.length === 0) { %>
-    <p class="w-full text-center text-gray-400 text-lg">
-      No posts yet.
-    </p>
-  <% } %>
-
   <% posts.forEach(post => { %>
 
   <!-- POST CARD -->
-  <div class="w-full sm:w-[48%] lg:w-[31%]">
+  <div
+    class="w-full sm:w-[48%] lg:w-[31%]"
+    id="post-<%= post.id %>">
 
     <div class="w-full bg-cyberCard rounded-xl border border-cyberGlow/20 shadow-glow">
 
-      <a href="/posts/<%= post.id %>" class="block w-full text-left">
+      <div class="block w-full text-left">
 
-        <!-- HEADER ROW (WITH PADDING FIXED) -->
+        <!-- HEADER -->
         <div class="flex justify-between items-start pt-4 pb-2">
           <h3 class="pl-5 text-cyberGlow font-bold text-lg">
             @<%= post.username %>
@@ -73,14 +67,23 @@ tailwind.config = {
           </small>
         </div>
 
-        <!-- POST CONTENT (FLUID LEFT → RIGHT) -->
-        <div class="px-5 pb-5 pt-2">
+        <!-- CONTENT -->
+        <div class="px-5 pb-4 pt-2">
           <p class="w-full text-left text-gray-300 whitespace-normal leading-relaxed break-words">
             <%= post.content %>
           </p>
         </div>
 
-      </a>
+        <!-- ACTIONS -->
+        <div class="flex justify-end px-5 pb-4">
+          <button
+            onclick="deletePost('<%= post.id %>')"
+            class="text-red-400 hover:text-red-300 text-sm font-bold">
+            Delete
+          </button>
+        </div>
+
+      </div>
 
     </div>
 
@@ -89,6 +92,26 @@ tailwind.config = {
   <% }) %>
 
 </section>
+
+<script>
+function deletePost(postId) {
+  if (!confirm("Delete this post?")) return;
+
+  fetch(`/posts/${postId}`, {
+    method: "DELETE"
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      const postEl = document.getElementById(`post-${postId}`);
+      if (postEl) postEl.remove();
+    } else {
+      alert("Failed to delete post");
+    }
+  })
+  .catch(() => alert("Error deleting post"));
+}
+</script>
 
 </body>
 </html>
