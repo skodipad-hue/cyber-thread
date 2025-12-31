@@ -45,25 +45,23 @@ tailwind.config = {
   </a>
 </header>
 
-<!-- FEED GRID -->
+<!-- FEED FLEX CONTAINER -->
 <section
-  class="max-w-7xl mx-auto mt-10
-         grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3
-         gap-8 px-6 pb-20
-         items-start place-items-stretch">
+  class="max-w-7xl mx-auto mt-10 px-6 pb-20
+         flex flex-wrap gap-8
+         justify-start items-stretch">
 
   <% if (!posts || posts.length === 0) { %>
-    <p class="col-span-full text-center text-gray-400 text-lg">
+    <p class="w-full text-center text-gray-400 text-lg">
       No posts yet.
     </p>
   <% } %>
 
   <% posts.forEach(post => { %>
 
-    <!-- GRID CELL -->
-    <div class="w-full">
+    <!-- POST CARD -->
+    <div class="w-full sm:w-[48%] lg:w-[31%]">
 
-      <!-- CARD -->
       <div
         class="w-full h-full
                bg-cyberCard rounded-xl
@@ -71,12 +69,11 @@ tailwind.config = {
                shadow-glow hover:shadow-glowHover
                transition-all duration-300">
 
-        <!-- CLICKABLE CONTENT -->
         <a href="/posts/<%= post.id %>"
            class="block w-full h-full p-5 text-left">
 
-          <!-- HEADER ROW -->
-          <div class="flex justify-between items-start w-full">
+          <!-- USER + TIME -->
+          <div class="flex justify-between items-start">
             <h3 class="text-cyberGlow font-bold text-lg">
               @<%= post.username %>
             </h3>
@@ -85,28 +82,19 @@ tailwind.config = {
             </small>
           </div>
 
-          <!-- POST TEXT -->
+          <!-- POST CONTENT (REAL LEFT ALIGN) -->
           <p
-            class="mt-3 w-full
-                   text-left text-gray-300
+            class="mt-3 text-left text-gray-300
                    whitespace-pre-wrap
                    leading-relaxed
                    break-words">
             <%= post.content %>
           </p>
 
-          <% if (post.url) { %>
-            <img
-              src="<%= post.url %>"
-              alt="Post image"
-              class="mt-4 w-full rounded-lg
-                     border border-cyberGlow/30
-                     shadow-lg">
-          <% } %>
-
         </a>
 
       </div>
+
     </div>
 
   <% }) %>
