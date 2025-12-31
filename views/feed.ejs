@@ -28,37 +28,54 @@ tailwind.config = {
 
 <body class="bg-cyberBg text-cyberText font-mono min-h-screen">
 
+<!-- HEADER -->
 <header class="flex justify-between items-center p-6 border-b border-cyberGlow/30 bg-cyberCard shadow-glow">
-  <a href="/login" class="px-4 py-2 bg-red-500 text-black rounded-lg font-bold">Logout</a>
-  <h1 class="text-3xl font-bold text-cyberGlow tracking-widest">CYBER THREADS</h1>
-  <a href="/profile/<%= userId %>" class="px-4 py-2 bg-cyberGlow text-black rounded-lg font-bold">Profile</a>
+  <a href="/login" class="px-4 py-2 bg-red-500 text-black rounded-lg font-bold">
+    Logout
+  </a>
+
+  <h1 class="text-3xl font-bold text-cyberGlow tracking-widest">
+    CYBER THREADS
+  </h1>
+
+  <a href="/profile/<%= userId %>" class="px-4 py-2 bg-cyberGlow text-black rounded-lg font-bold">
+    Profile
+  </a>
 </header>
 
+<!-- FEED FLEX CONTAINER -->
 <section
   class="max-w-7xl mx-auto mt-10 px-6 pb-20
          flex flex-wrap gap-8 justify-start items-start">
 
+  <% if (!posts || posts.length === 0) { %>
+    <p class="w-full text-center text-gray-400 text-lg">
+      No posts yet.
+    </p>
+  <% } %>
+
   <% posts.forEach(post => { %>
 
+  <!-- POST CARD -->
   <div class="w-full sm:w-[48%] lg:w-[31%]">
 
     <div class="w-full bg-cyberCard rounded-xl border border-cyberGlow/20 shadow-glow">
 
       <a href="/posts/<%= post.id %>" class="block w-full text-left">
 
-        <!-- HEADER ROW -->
-        <div class="flex justify-between items-start pt-4 pr-5 pb-2 pl-0">
-          <h3 class="text-cyberGlow font-bold text-lg">
+        <!-- HEADER ROW (WITH PADDING FIXED) -->
+        <div class="flex justify-between items-start pt-4 pb-2">
+          <h3 class="pl-5 text-cyberGlow font-bold text-lg">
             @<%= post.username %>
           </h3>
-          <small class="text-gray-400 text-xs whitespace-nowrap">
+          <small class="pr-5 text-gray-400 text-xs whitespace-nowrap">
             <%= post.timeAgo %>
           </small>
         </div>
 
-        <!-- POST CONTENT (ABSOLUTE LEFT EDGE) -->
-        <div class="pl-0 pr-5 pb-5">
-          <p class="w-full text-left text-gray-300 whitespace-pre-wrap leading-relaxed break-words">
+        <!-- POST CONTENT (FLUID LEFT → RIGHT) -->
+        <div class="px-5 pb-5 pt-2">
+          <p class="w-full text-left text-gray-300 whitespace-normal leading-relaxed break-words">
             <%= post.content %>
           </p>
         </div>
