@@ -41,14 +41,15 @@ tailwind.config = {
   <div
     class="max-w-7xl mx-auto
            px-4 sm:px-6
-           py-4
-           flex flex-col gap-4
+           py-5 sm:py-4
+           flex flex-col gap-5
            sm:flex-row sm:items-center sm:justify-between">
 
-    <!-- LEFT -->
+    <!-- LEFT: LOGOUT -->
     <a href="/login"
        class="self-start sm:self-auto
-              px-4 py-2
+              px-5 py-3 sm:px-4 sm:py-2
+              text-base sm:text-sm
               bg-red-500 text-white
               rounded-full font-semibold
               hover:bg-red-400
@@ -56,26 +57,27 @@ tailwind.config = {
       Logout
     </a>
 
-    <!-- CENTER -->
+    <!-- CENTER: TITLE + THEME TOGGLE -->
     <div class="flex items-center justify-center gap-4">
-      <h1 class="text-xl font-bold text-twitterBlue uppercase">
+      <h1 class="text-2xl sm:text-xl font-bold text-twitterBlue uppercase">
         CYBER THREADS
       </h1>
 
       <button id="themeToggle"
-        class="p-2 rounded-full
+        class="p-3 sm:p-2 rounded-full
                hover:bg-twitterHover
                dark:hover:bg-white/10
                transition">
-        <span id="sun" class="text-lg">☀️</span>
-        <span id="moon" class="text-lg hidden">🌙</span>
+        <span id="sun" class="text-xl sm:text-lg">☀️</span>
+        <span id="moon" class="text-xl sm:text-lg hidden">🌙</span>
       </button>
     </div>
 
-    <!-- RIGHT -->
+    <!-- RIGHT: PROFILE -->
     <a href="/profile/<%= userId %>"
        class="self-end sm:self-auto
-              px-4 py-2
+              px-5 py-3 sm:px-4 sm:py-2
+              text-base sm:text-sm
               bg-twitterBlue text-white
               rounded-full font-semibold
               hover:bg-[#1a8cd8]
@@ -92,7 +94,7 @@ tailwind.config = {
          px-4 sm:px-6
          pb-20
          flex flex-wrap
-         gap-4 sm:gap-6
+         gap-5 sm:gap-6
          justify-start items-start">
 
   <% if (!posts || posts.length === 0) { %>
@@ -117,7 +119,7 @@ tailwind.config = {
 
         <!-- HEADER -->
         <div class="flex justify-between items-start px-5 pt-4 pb-2">
-          <h3 class="font-semibold text-sm">
+          <h3 class="font-semibold text-base sm:text-sm">
             @<%= post.username %>
           </h3>
           <small class="text-twitterMuted dark:text-darkMuted text-xs whitespace-nowrap">
@@ -127,7 +129,7 @@ tailwind.config = {
 
         <!-- CONTENT -->
         <div class="px-5 pb-5 pt-1">
-          <p class="text-[15px] leading-relaxed break-words">
+          <p class="text-[16px] sm:text-[15px] leading-relaxed break-words">
             <%= post.content %>
           </p>
         </div>
