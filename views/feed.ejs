@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Feed</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
@@ -32,104 +33,78 @@ tailwind.config = {
 </script>
 </head>
 
-<body class="bg-twitterBg text-twitterText dark:bg-darkBg dark:text-darkText font-sans antialiased min-h-screen">
+<body class="bg-twitterBg dark:bg-darkBg text-twitterText dark:text-darkText font-sans min-h-screen">
 
-<!-- HEADER -->
+<!-- ================= HEADER ================= -->
 <header class="bg-white dark:bg-darkBg border-b border-twitterBorder dark:border-darkBorder">
-  <div
-    class="max-w-7xl mx-auto
-           px-[18px] sm:px-6
-           py-[22px] sm:py-4
-           flex flex-col gap-[18px]
-           sm:flex-row sm:items-center sm:justify-between">
+  <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 px-4 py-6 sm:py-4">
 
-    <!-- LOGOUT (MOBILE BIG) -->
+    <!-- LOGOUT -->
     <a href="/login"
-       class="self-start sm:self-auto
-              px-[22px] py-[14px]
-              sm:px-4 sm:py-2
-              text-[16px] sm:text-sm
-              bg-red-500 text-white
-              rounded-full font-semibold
+       style="padding:16px 26px;font-size:17px"
+       class="sm:px-4 sm:py-2 sm:text-sm
+              bg-red-500 text-white rounded-full font-semibold
               hover:bg-red-400 transition">
       Logout
     </a>
 
-    <!-- CENTER -->
-    <div class="flex items-center justify-center gap-[14px]">
-      <h1 class="text-[28px] sm:text-xl font-bold text-twitterBlue uppercase tracking-wide">
+    <!-- TITLE + TOGGLE -->
+    <div class="flex items-center justify-center gap-4">
+      <h1
+        style="font-size:30px;letter-spacing:2px"
+        class="sm:text-xl font-bold text-twitterBlue uppercase">
         CYBER THREADS
       </h1>
 
       <button id="themeToggle"
-        class="p-[10px] sm:p-2 rounded-full
-               hover:bg-twitterHover
-               dark:hover:bg-white/10
-               transition">
-        <span id="sun" class="text-[22px] sm:text-lg">☀️</span>
-        <span id="moon" class="text-[22px] sm:text-lg hidden">🌙</span>
+        style="padding:12px"
+        class="sm:p-2 rounded-full hover:bg-twitterHover dark:hover:bg-white/10 transition">
+        <span id="sun" style="font-size:22px">☀️</span>
+        <span id="moon" style="font-size:22px" class="hidden">🌙</span>
       </button>
     </div>
 
-    <!-- PROFILE (MOBILE BIG) -->
+    <!-- PROFILE -->
     <a href="/profile/<%= userId %>"
-       class="self-end sm:self-auto
-              px-[22px] py-[14px]
-              sm:px-4 sm:py-2
-              text-[16px] sm:text-sm
-              bg-twitterBlue text-white
-              rounded-full font-semibold
-              hover:bg-[#1a8cd8]
-              transition">
+       style="padding:16px 26px;font-size:17px"
+       class="sm:px-4 sm:py-2 sm:text-sm
+              bg-twitterBlue text-white rounded-full font-semibold
+              hover:bg-[#1a8cd8] transition">
       Profile
     </a>
 
   </div>
 </header>
 
-<!-- FEED -->
-<section
-  class="max-w-7xl mx-auto mt-[18px]
-         px-[18px] sm:px-6
-         pb-20
-         flex flex-wrap
-         gap-[18px] sm:gap-6
-         justify-start items-start">
-
-  <% if (!posts || posts.length === 0) { %>
-    <p class="w-full text-center text-twitterMuted dark:text-darkMuted text-[16px]">
-      No posts yet.
-    </p>
-  <% } %>
+<!-- ================= FEED ================= -->
+<section class="max-w-7xl mx-auto px-4 mt-4 pb-24">
 
   <% posts.forEach(post => { %>
 
-  <!-- POST CARD (ONE PER ROW ON PHONE) -->
-  <div class="w-full sm:w-[48%] lg:w-[31%]">
+  <!-- MOBILE: 1 POST PER ROW | DESKTOP: SAME AS BEFORE -->
+  <div class="w-full sm:w-[48%] lg:w-[31%] sm:inline-block sm:mr-4 mb-5 align-top">
 
-    <div
-      class="bg-twitterCard dark:bg-darkCard
-             border border-twitterBorder dark:border-darkBorder
-             rounded-[18px]
-             shadow-sm hover:shadow-md transition">
+    <div class="bg-twitterCard dark:bg-darkCard
+                border border-twitterBorder dark:border-darkBorder
+                rounded-2xl shadow-sm hover:shadow-md transition">
 
-      <a href="/posts/<%= post.id %>" class="block w-full text-left">
+      <a href="/posts/<%= post.id %>" class="block">
 
         <!-- POST HEADER -->
-        <div class="flex justify-between items-start px-[18px] pt-[16px] pb-[10px]">
-          <h3 class="font-semibold text-[17px] sm:text-sm">
+        <div style="padding:18px 20px 10px"
+             class="flex justify-between items-start">
+          <h3 style="font-size:18px" class="font-semibold">
             @<%= post.username %>
           </h3>
-          <small class="text-twitterMuted dark:text-darkMuted text-[13px] whitespace-nowrap">
+          <small style="font-size:14px"
+                 class="text-twitterMuted dark:text-darkMuted whitespace-nowrap">
             <%= post.timeAgo %>
           </small>
         </div>
 
         <!-- POST CONTENT -->
-        <div class="px-[18px] pb-[18px] pt-[6px]">
-          <p class="text-[18px] sm:text-[15px]
-                    leading-[26px] sm:leading-relaxed
-                    break-words">
+        <div style="padding:0 20px 20px">
+          <p style="font-size:18px;line-height:28px">
             <%= post.content %>
           </p>
         </div>
@@ -144,25 +119,24 @@ tailwind.config = {
 
 </section>
 
-<!-- THEME TOGGLE SCRIPT -->
+<!-- ================= THEME SCRIPT ================= -->
 <script>
-  const html = document.documentElement;
-  const toggle = document.getElementById("themeToggle");
-  const sun = document.getElementById("sun");
-  const moon = document.getElementById("moon");
+const html = document.documentElement;
+const sun = document.getElementById("sun");
+const moon = document.getElementById("moon");
 
-  if (localStorage.theme === "dark") {
-    html.classList.add("dark");
-    sun.classList.add("hidden");
-    moon.classList.remove("hidden");
-  }
+if (localStorage.theme === "dark") {
+  html.classList.add("dark");
+  sun.classList.add("hidden");
+  moon.classList.remove("hidden");
+}
 
-  toggle.onclick = () => {
-    const isDark = html.classList.toggle("dark");
-    sun.classList.toggle("hidden", isDark);
-    moon.classList.toggle("hidden", !isDark);
-    localStorage.theme = isDark ? "dark" : "light";
-  };
+document.getElementById("themeToggle").onclick = () => {
+  const isDark = html.classList.toggle("dark");
+  sun.classList.toggle("hidden", isDark);
+  moon.classList.toggle("hidden", !isDark);
+  localStorage.theme = isDark ? "dark" : "light";
+};
 </script>
 
 </body>
