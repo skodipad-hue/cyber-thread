@@ -8,16 +8,25 @@
 
 <script>
 tailwind.config = {
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
+        /* LIGHT (unchanged) */
         twitterBg: "#f5f9fc",
         twitterCard: "#ffffff",
         twitterBorder: "#e5eff6",
         twitterBlue: "#1d9bf0",
         twitterHover: "#e8f3ff",
         twitterText: "#0f172a",
-        twitterMuted: "#64748b"
+        twitterMuted: "#64748b",
+
+        /* DARK (graphite blue) */
+        darkBg: "#0f1419",
+        darkCard: "#161b22",
+        darkBorder: "#232a31",
+        darkText: "#e6edf3",
+        darkMuted: "#8b949e"
       }
     }
   }
@@ -25,21 +34,36 @@ tailwind.config = {
 </script>
 </head>
 
-<body class="bg-twitterBg text-twitterText font-sans antialiased min-h-screen">
+<body class="bg-twitterBg text-twitterText dark:bg-darkBg dark:text-darkText font-sans antialiased min-h-screen">
 
 <!-- HEADER -->
-<header class="bg-white border-b border-twitterBorder">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+<header class="bg-white dark:bg-darkBg border-b border-twitterBorder dark:border-darkBorder">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
+    <!-- LEFT -->
     <a href="/login"
        class="text-red-500 font-semibold hover:underline">
       Logout
     </a>
 
-    <h1 class="text-xl font-bold text-twitterBlue tracking-tight">
-      Cyber Threads
-    </h1>
+    <!-- CENTER -->
+    <div class="flex items-center gap-4">
+      <h1 class="text-xl font-bold text-twitterBlue">
+        Cyber Threads
+      </h1>
 
+      <!-- THEME TOGGLE (CENTERED) -->
+      <button id="themeToggle"
+        class="p-2 rounded-full
+               hover:bg-twitterHover
+               dark:hover:bg-white/10
+               transition">
+        <span id="sun" class="text-lg">☀️</span>
+        <span id="moon" class="text-lg hidden">🌙</span>
+      </button>
+    </div>
+
+    <!-- RIGHT -->
     <a href="/profile/<%= userId %>"
        class="text-twitterBlue font-semibold hover:underline">
       Profile
@@ -54,7 +78,7 @@ tailwind.config = {
          flex flex-wrap gap-6 justify-start items-start">
 
   <% if (!posts || posts.length === 0) { %>
-    <p class="w-full text-center text-twitterMuted text-base">
+    <p class="w-full text-center text-twitterMuted dark:text-darkMuted">
       No posts yet.
     </p>
   <% } %>
@@ -65,28 +89,27 @@ tailwind.config = {
   <div class="w-full sm:w-[48%] lg:w-[31%]">
 
     <div
-      class="bg-twitterCard
-             border border-twitterBorder
+      class="bg-twitterCard dark:bg-darkCard
+             border border-twitterBorder dark:border-darkBorder
              rounded-2xl
-             shadow-sm
-             hover:shadow-md
+             shadow-sm hover:shadow-md
              transition">
 
       <a href="/posts/<%= post.id %>" class="block w-full text-left">
 
         <!-- HEADER -->
         <div class="flex justify-between items-start px-5 pt-4 pb-2">
-          <h3 class="font-semibold text-twitterText text-sm">
+          <h3 class="font-semibold text-sm">
             @<%= post.username %>
           </h3>
-          <small class="text-twitterMuted text-xs whitespace-nowrap">
+          <small class="text-twitterMuted dark:text-darkMuted text-xs whitespace-nowrap">
             <%= post.timeAgo %>
           </small>
         </div>
 
         <!-- CONTENT -->
         <div class="px-5 pb-5 pt-1">
-          <p class="text-[15px] leading-relaxed text-twitterText break-words">
+          <p class="text-[15px] leading-relaxed break-words">
             <%= post.content %>
           </p>
         </div>
@@ -100,6 +123,28 @@ tailwind.config = {
   <% }) %>
 
 </section>
+
+<!-- THEME TOGGLE SCRIPT -->
+<script>
+  const html = document.documentElement;
+  const toggle = document.getElementById("themeToggle");
+  const sun = document.getElementById("sun");
+  const moon = document.getElementById("moon");
+
+  // Load saved theme
+  if (localStorage.theme === "dark") {
+    html.classList.add("dark");
+    sun.classList.add("hidden");
+    moon.classList.remove("hidden");
+  }
+
+  toggle.onclick = () => {
+    const isDark = html.classList.toggle("dark");
+    sun.classList.toggle("hidden", isDark);
+    moon.classList.toggle("hidden", !isDark);
+    localStorage.theme = isDark ? "dark" : "light";
+  };
+</script>
 
 </body>
 </html>

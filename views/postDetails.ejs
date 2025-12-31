@@ -9,16 +9,25 @@
 
   <script>
     tailwind.config = {
+      darkMode: "class",
       theme: {
         extend: {
           colors: {
+            /* LIGHT */
             twitterBg: "#f5f9fc",
             twitterCard: "#ffffff",
             twitterBorder: "#e5eff6",
             twitterBlue: "#1d9bf0",
             twitterHover: "#e8f3ff",
             twitterText: "#0f172a",
-            twitterMuted: "#64748b"
+            twitterMuted: "#64748b",
+
+            /* DARK (Graphite Blue) */
+            darkBg: "#0f1419",
+            darkCard: "#161b22",
+            darkBorder: "#232a31",
+            darkText: "#e6edf3",
+            darkMuted: "#8b949e"
           }
         }
       }
@@ -26,7 +35,17 @@
   </script>
 </head>
 
-<body class="bg-twitterBg text-twitterText min-h-screen font-sans antialiased">
+<body class="bg-twitterBg dark:bg-darkBg text-twitterText dark:text-darkText min-h-screen font-sans antialiased">
+
+<!-- THEME TOGGLE (TOP RIGHT) -->
+<button id="themeToggle"
+  class="fixed top-6 right-6 p-2 rounded-full
+         hover:bg-twitterHover dark:hover:bg-white/10
+         transition shadow-sm z-50">
+
+  <span id="sun" class="text-lg">☀️</span>
+  <span id="moon" class="text-lg hidden">🌙</span>
+</button>
 
 <!-- BACK -->
 <a href="/users/<%= post.user_id %>/posts"
@@ -36,30 +55,34 @@
   ← Back
 </a>
 
-<div class="max-w-3xl mx-auto bg-twitterCard p-8 rounded-2xl border border-twitterBorder shadow-sm">
+<div class="max-w-3xl mx-auto bg-twitterCard dark:bg-darkCard
+            p-8 rounded-2xl border border-twitterBorder dark:border-darkBorder
+            shadow-sm">
 
   <!-- USER HEADER -->
   <div class="flex items-center gap-5 mb-6">
 
     <!-- PROFILE IMAGE -->
-    <div class="w-16 h-16 rounded-full overflow-hidden border border-twitterBorder bg-gray-100">
+    <div class="w-16 h-16 rounded-full overflow-hidden
+                border border-twitterBorder dark:border-darkBorder
+                bg-gray-100 dark:bg-darkBg">
       <% if (post.profile_url) { %>
         <img src="<%= post.profile_url %>" class="w-full h-full object-cover">
       <% } else { %>
-        <div class="w-full h-full flex items-center justify-center text-twitterMuted text-xs">
+        <div class="w-full h-full flex items-center justify-center text-twitterMuted dark:text-darkMuted text-xs">
           No Image
         </div>
       <% } %>
     </div>
 
     <div>
-      <h1 class="text-lg font-bold text-twitterText">
+      <h1 class="text-lg font-bold">
         @<%= post.username %>
       </h1>
-      <p class="text-sm text-twitterMuted">
+      <p class="text-sm text-twitterMuted dark:text-darkMuted">
         <%= post.email %>
       </p>
-      <p class="text-xs text-twitterMuted">
+      <p class="text-xs text-twitterMuted dark:text-darkMuted">
         <%= post.timeAgo %>
       </p>
     </div>
@@ -69,18 +92,43 @@
   <% if (post.url) { %>
     <img
       src="<%= post.url %>"
-      class="rounded-xl mb-6 max-h-[420px] mx-auto border border-twitterBorder"
+      class="rounded-xl mb-6 max-h-[420px] mx-auto
+             border border-twitterBorder dark:border-darkBorder"
       alt="Post image">
   <% } %>
 
   <!-- POST CONTENT -->
-  <div class="bg-twitterHover p-6 rounded-xl border border-twitterBorder">
-    <p class="text-[15px] leading-relaxed text-twitterText whitespace-normal break-words">
+  <div class="bg-twitterHover dark:bg-white/5
+              p-6 rounded-xl
+              border border-twitterBorder dark:border-darkBorder">
+
+    <p class="text-[15px] leading-relaxed break-words">
       <%= post.content %>
     </p>
   </div>
 
 </div>
+
+<!-- THEME TOGGLE SCRIPT -->
+<script>
+  const html = document.documentElement;
+  const toggle = document.getElementById("themeToggle");
+  const sun = document.getElementById("sun");
+  const moon = document.getElementById("moon");
+
+  if (localStorage.theme === "dark") {
+    html.classList.add("dark");
+    sun.classList.add("hidden");
+    moon.classList.remove("hidden");
+  }
+
+  toggle.onclick = () => {
+    const isDark = html.classList.toggle("dark");
+    sun.classList.toggle("hidden", isDark);
+    moon.classList.toggle("hidden", !isDark);
+    localStorage.theme = isDark ? "dark" : "light";
+  };
+</script>
 
 </body>
 </html>
