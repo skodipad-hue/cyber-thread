@@ -33,9 +33,10 @@
   </script>
 </head>
 
-<body class="bg-twitterBg dark:bg-darkBg text-twitterText dark:text-darkText min-h-screen font-sans antialiased">
+<body class="bg-twitterBg dark:bg-darkBg text-twitterText dark:text-darkText
+             min-h-screen font-sans antialiased">
 
-<!-- THEME TOGGLE -->
+<!-- 🌞🌙 THEME TOGGLE (TOP RIGHT – REPLACES PROFILE BUTTON) -->
 <button id="themeToggle"
   class="fixed top-6 right-6 p-2 rounded-full
          hover:bg-twitterHover dark:hover:bg-white/10
@@ -44,13 +45,23 @@
   <span id="moon" class="hidden">🌙</span>
 </button>
 
-<!-- BACK -->
+<!-- ← BACK TO FEED -->
 <a href="/users/<%= user.id %>/posts"
    class="fixed top-6 left-6 px-4 py-2
           bg-twitterBlue text-white
           rounded-full font-semibold
-          hover:bg-[#1a8cd8] transition">
-  ← Back to Feed
+          hover:bg-[#1a8cd8] transition z-50">
+  ← Back
+</a>
+
+<!-- 👤 FLOATING PROFILE BUTTON -->
+<a href="/profile/<%= user.id %>"
+   class="fixed bottom-6 right-6 px-5 py-3
+          bg-twitterBlue text-white
+          rounded-full font-semibold
+          shadow-lg hover:bg-[#1a8cd8]
+          transition z-50">
+  Profile
 </a>
 
 <div class="max-w-3xl mx-auto mt-20
@@ -137,7 +148,6 @@
       <p class="mb-2 whitespace-pre-wrap"><%= post.content %></p>
       <p class="text-xs text-twitterMuted dark:text-darkMuted mb-4"><%= post.timeAgo %></p>
 
-      <!-- ACTIONS -->
       <div class="flex justify-end items-center gap-3">
 
         <!-- EDIT -->
