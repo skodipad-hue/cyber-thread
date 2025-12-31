@@ -1,31 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            twitterBg: "#f5f9fc",
+            twitterCard: "#ffffff",
+            twitterBorder: "#e5eff6",
+            twitterBlue: "#1d9bf0",
+            twitterHover: "#e8f3ff",
+            twitterText: "#0f172a",
+            twitterMuted: "#64748b"
+          }
+        }
+      }
+    }
+  </script>
 </head>
 
-<body class="bg-black text-gray-200 min-h-screen font-mono">
+<body class="bg-twitterBg text-twitterText min-h-screen font-sans antialiased">
 
 <!-- BACK TO FEED -->
 <a href="/users/<%= user.id %>/posts"
-   class="fixed top-6 left-6 px-4 py-2 bg-pink-500 text-white
-          rounded-lg font-bold shadow-lg hover:bg-pink-600 transition">
-  ← Back to Feed
+   class="fixed top-5 left-5 px-4 py-2 bg-twitterBlue text-white
+          rounded-full font-semibold shadow-sm hover:bg-[#1a8cd8] transition">
+  ← Back
 </a>
 
-<div class="max-w-3xl mx-auto mt-16 bg-[#12121a] border border-cyan-400/30 rounded-xl shadow-xl p-8">
+<div class="max-w-3xl mx-auto mt-16 bg-twitterCard border border-twitterBorder rounded-2xl shadow-sm p-8">
 
   <!-- USER HEADER -->
-  <div class="flex flex-col items-center mb-8">
+  <div class="flex flex-col items-center mb-10">
 
     <!-- PROFILE IMAGE -->
-    <div class="w-40 h-40 rounded-full border-2 border-cyan-400/40
-                bg-black overflow-hidden flex items-center justify-center shadow-lg">
+    <div class="w-36 h-36 rounded-full border border-twitterBorder overflow-hidden bg-gray-100">
       <% if (user.profile_url) { %>
         <img src="<%= user.profile_url %>" class="w-full h-full object-cover">
       <% } else { %>
-        <span class="text-gray-500 text-sm">No Profile Image</span>
+        <div class="w-full h-full flex items-center justify-center text-twitterMuted text-sm">
+          No Image
+        </div>
       <% } %>
     </div>
 
@@ -36,11 +58,11 @@
           class="mt-4 w-full max-w-sm text-center">
 
       <div id="profileDrop"
-           class="border-2 border-dashed border-cyan-400/40
-                  rounded-xl px-4 py-4 cursor-pointer
-                  hover:bg-cyan-400/10 transition">
-        <p class="text-cyan-400 font-bold">Drag & Drop Profile Image</p>
-        <p class="text-gray-400 text-sm">or click to browse</p>
+           class="border border-dashed border-twitterBorder rounded-xl
+                  px-4 py-4 cursor-pointer hover:bg-twitterHover transition">
+
+        <p class="text-twitterBlue font-semibold">Upload Profile Image</p>
+        <p class="text-twitterMuted text-sm">Click or drag & drop</p>
 
         <input type="file"
                name="profileImage"
@@ -49,72 +71,92 @@
                hidden>
       </div>
 
-      <button class="mt-3 px-6 py-2 bg-cyan-400 text-black rounded font-bold">
-        Upload Profile Photo
+      <button
+        class="mt-3 px-6 py-2 bg-twitterBlue text-white rounded-full
+               font-semibold hover:bg-[#1a8cd8] transition">
+        Save Photo
       </button>
     </form>
 
-    <h1 class="text-3xl font-bold text-cyan-400 mt-6">
+    <h1 class="text-2xl font-bold mt-6">
       @<%= user.username %>
     </h1>
 
-    <p class="text-gray-400"><%= user.email %></p>
+    <p class="text-twitterMuted text-sm">
+      <%= user.email %>
+    </p>
   </div>
 
   <!-- BIO -->
-  <div class="mb-8 text-center">
-    <% if (!user.bio) { %>
-      <p class="text-red-400 mb-2">No bio added yet</p>
+  <div class="mb-10">
+    <h2 class="font-semibold mb-2">Bio</h2>
+
+    <% if (user.bio) { %>
+      <p class="text-twitterText mb-3">
+        <%= user.bio %>
+      </p>
     <% } else { %>
-      <p class="text-gray-300 mb-2"><%= user.bio %></p>
+      <p class="text-twitterMuted mb-3">No bio added yet</p>
     <% } %>
 
     <form action="/profile/<%= user.id %>" method="POST">
-      <textarea name="bio"
-        class="w-full bg-black border border-cyan-400/30 rounded p-2 text-gray-200"
+      <textarea
+        name="bio"
+        rows="3"
+        class="w-full border border-twitterBorder rounded-xl p-3
+               focus:outline-none focus:ring-2 focus:ring-twitterBlue"
         placeholder="Update your bio"></textarea>
 
-      <button class="mt-2 px-4 py-1 bg-cyan-400 text-black rounded font-bold">
+      <button
+        class="mt-2 px-4 py-2 bg-twitterBlue text-white
+               rounded-full font-semibold hover:bg-[#1a8cd8] transition">
         Save Bio
       </button>
     </form>
   </div>
 
-  <!-- CREATE POST (TEXT ONLY) -->
-  <form action="/users/<%= user.id %>/posts"
-        method="POST"
-        class="mb-10">
-
-    <textarea name="content"
-      class="w-full bg-black border border-cyan-400/30 rounded p-3 mb-3 text-gray-200"
+  <!-- CREATE POST -->
+  <form action="/users/<%= user.id %>/posts" method="POST" class="mb-12">
+    <textarea
+      name="content"
+      rows="3"
+      class="w-full border border-twitterBorder rounded-xl p-4
+             focus:outline-none focus:ring-2 focus:ring-twitterBlue mb-3"
       placeholder="What's on your mind?"
       required></textarea>
 
-    <button class="px-6 py-2 bg-cyan-400 text-black rounded font-bold">
+    <button
+      class="px-6 py-2 bg-twitterBlue text-white rounded-full
+             font-semibold hover:bg-[#1a8cd8] transition">
       Post
     </button>
   </form>
 
   <!-- POSTS LIST -->
   <% posts.forEach(post => { %>
-    <div class="bg-black/40 border border-cyan-400/20 rounded-xl p-4 mb-6">
+    <div class="border border-twitterBorder rounded-2xl p-5 mb-6">
 
-      <p class="text-gray-300 mb-2 whitespace-pre-wrap">
+      <p class="text-twitterText mb-2">
         <%= post.content %>
       </p>
 
-      <p class="text-gray-500 text-sm mb-3">
+      <p class="text-twitterMuted text-xs mb-4">
         <%= post.timeAgo %>
       </p>
 
       <!-- EDIT -->
-      <form action="/posts/<%= post.id %>?_method=PUT" method="POST" class="mb-2">
+      <form action="/posts/<%= post.id %>?_method=PUT" method="POST" class="mb-3">
         <input type="hidden" name="userId" value="<%= user.id %>">
-        <textarea name="content"
-          class="w-full bg-black border border-cyan-400/20 rounded p-2 text-gray-200">
-<%= post.content %>
-        </textarea>
-        <button class="mt-1 px-3 py-1 bg-yellow-400 text-black rounded font-bold">
+
+        <textarea
+          name="content"
+          rows="2"
+          class="w-full border border-twitterBorder rounded-xl p-3
+                 focus:outline-none focus:ring-2 focus:ring-twitterBlue mb-2"><%= post.content %></textarea>
+
+        <button
+          class="px-4 py-1.5 bg-yellow-400 text-black
+                 rounded-full font-semibold hover:bg-yellow-300 transition">
           Edit
         </button>
       </form>
@@ -122,7 +164,10 @@
       <!-- DELETE -->
       <form action="/posts/<%= post.id %>?_method=DELETE" method="POST">
         <input type="hidden" name="userId" value="<%= user.id %>">
-        <button class="px-3 py-1 bg-red-500 text-white rounded font-bold">
+
+        <button
+          class="px-4 py-1.5 bg-red-500 text-white
+                 rounded-full font-semibold hover:bg-red-400 transition">
           Delete
         </button>
       </form>
@@ -132,7 +177,7 @@
 
 </div>
 
-<!-- DRAG & DROP SCRIPT (PROFILE ONLY) -->
+<!-- DRAG & DROP SCRIPT -->
 <script>
   const box = document.getElementById("profileDrop");
   const input = document.getElementById("profileInput");
@@ -141,17 +186,17 @@
 
   box.addEventListener("dragover", e => {
     e.preventDefault();
-    box.classList.add("bg-cyan-400/10");
+    box.classList.add("bg-twitterHover");
   });
 
   box.addEventListener("dragleave", () => {
-    box.classList.remove("bg-cyan-400/10");
+    box.classList.remove("bg-twitterHover");
   });
 
   box.addEventListener("drop", e => {
     e.preventDefault();
     input.files = e.dataTransfer.files;
-    box.classList.remove("bg-cyan-400/10");
+    box.classList.remove("bg-twitterHover");
   });
 </script>
 

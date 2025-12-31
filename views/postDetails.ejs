@@ -1,48 +1,84 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Post Details</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            twitterBg: "#f5f9fc",
+            twitterCard: "#ffffff",
+            twitterBorder: "#e5eff6",
+            twitterBlue: "#1d9bf0",
+            twitterHover: "#e8f3ff",
+            twitterText: "#0f172a",
+            twitterMuted: "#64748b"
+          }
+        }
+      }
+    }
+  </script>
 </head>
 
-<body class="bg-[#0a0a0f] text-gray-200 font-mono min-h-screen">
+<body class="bg-twitterBg text-twitterText min-h-screen font-sans antialiased">
 
+<!-- BACK -->
 <a href="/users/<%= post.user_id %>/posts"
-   class="m-6 inline-block px-4 py-2 bg-pink-500 text-white rounded shadow">
-  ← Back to Feed
+   class="inline-flex items-center gap-2 m-6 px-4 py-2
+          bg-twitterBlue text-white rounded-full
+          font-semibold shadow-sm hover:bg-[#1a8cd8] transition">
+  ← Back
 </a>
 
-<div class="max-w-5xl mx-auto bg-[#12121a] p-10 rounded-xl border border-cyan-400/20 shadow-xl">
+<div class="max-w-3xl mx-auto bg-twitterCard p-8 rounded-2xl border border-twitterBorder shadow-sm">
 
-  <div class="flex items-center gap-6 mb-6">
+  <!-- USER HEADER -->
+  <div class="flex items-center gap-5 mb-6">
 
     <!-- PROFILE IMAGE -->
-    <div class="w-20 h-20 rounded-full overflow-hidden border border-cyan-400/30">
+    <div class="w-16 h-16 rounded-full overflow-hidden border border-twitterBorder bg-gray-100">
       <% if (post.profile_url) { %>
         <img src="<%= post.profile_url %>" class="w-full h-full object-cover">
       <% } else { %>
-        <div class="w-full h-full flex items-center justify-center text-gray-500 text-xs">
+        <div class="w-full h-full flex items-center justify-center text-twitterMuted text-xs">
           No Image
         </div>
       <% } %>
     </div>
 
     <div>
-      <h1 class="text-2xl text-cyan-400 font-bold">@<%= post.username %></h1>
-      <p class="text-gray-400"><%= post.email %></p>
-      <p class="text-sm text-gray-500"><%= post.timeAgo %></p>
+      <h1 class="text-lg font-bold text-twitterText">
+        @<%= post.username %>
+      </h1>
+      <p class="text-sm text-twitterMuted">
+        <%= post.email %>
+      </p>
+      <p class="text-xs text-twitterMuted">
+        <%= post.timeAgo %>
+      </p>
     </div>
   </div>
 
   <!-- POST IMAGE -->
   <% if (post.url) { %>
-    <img src="<%= post.url %>"
-         class="rounded-xl mb-6 max-h-[400px] mx-auto shadow-lg">
+    <img
+      src="<%= post.url %>"
+      class="rounded-xl mb-6 max-h-[420px] mx-auto border border-twitterBorder"
+      alt="Post image">
   <% } %>
 
-  <p class="bg-black/40 p-6 rounded border border-cyan-400/10 whitespace-pre-wrap">
-    <%= post.content %>
-  </p>
+  <!-- POST CONTENT -->
+  <div class="bg-twitterHover p-6 rounded-xl border border-twitterBorder">
+    <p class="text-[15px] leading-relaxed text-twitterText whitespace-normal break-words">
+      <%= post.content %>
+    </p>
+  </div>
 
 </div>
 

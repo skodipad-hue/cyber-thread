@@ -8,16 +8,19 @@
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Custom cyber theme -->
+    <!-- Twitter-style light theme -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        cyberbg: '#050510',
-                        cybercard: '#0d0d25',
-                        cyberaccent: '#00f7ff',
-                        cybertext: '#d0d6ff'
+                        twitterBg: "#f5f9fc",
+                        twitterCard: "#ffffff",
+                        twitterBorder: "#e5eff6",
+                        twitterBlue: "#1d9bf0",
+                        twitterHover: "#e8f3ff",
+                        twitterText: "#0f172a",
+                        twitterMuted: "#64748b"
                     }
                 }
             }
@@ -25,50 +28,61 @@
     </script>
 </head>
 
-<body class="bg-cyberbg min-h-screen flex items-center justify-center text-cybertext">
+<body class="bg-twitterBg min-h-screen flex items-center justify-center text-twitterText antialiased">
 
-    <div class="bg-cybercard p-8 rounded-xl shadow-2xl w-full max-w-md border border-cyberaccent">
+    <div class="bg-twitterCard w-full max-w-md p-8 rounded-2xl border border-twitterBorder shadow-sm">
 
-        <h1 class="text-3xl font-bold text-center text-cyberaccent mb-6 tracking-widest">
-            STEP INTO FEED
+        <h1 class="text-2xl font-bold text-center text-twitterBlue mb-6 tracking-tight">
+            Step into Feed
         </h1>
 
         <!-- LOGIN FORM -->
-        <form method="POST" action="/login" class="space-y-4">
+        <form method="POST" action="/login" class="space-y-5">
 
             <div>
-                <label class="block mb-1 text-sm">Email</label>
+                <label class="block mb-1 text-sm text-twitterMuted">
+                    Email
+                </label>
                 <input
                     type="text"
                     name="email"
                     required
-                    class="w-full p-2 rounded bg-black border border-cyberaccent text-cybertext focus:outline-none focus:ring-2 focus:ring-cyberaccent"
+                    class="w-full px-4 py-2 rounded-lg border border-twitterBorder
+                           focus:outline-none focus:ring-2 focus:ring-twitterBlue
+                           focus:border-transparent"
                 >
             </div>
 
             <div>
-                <label class="block mb-1 text-sm">Password</label>
+                <label class="block mb-1 text-sm text-twitterMuted">
+                    Password
+                </label>
                 <input
                     type="password"
                     name="password"
                     required
-                    class="w-full p-2 rounded bg-black border border-cyberaccent text-cybertext focus:outline-none focus:ring-2 focus:ring-cyberaccent"
+                    class="w-full px-4 py-2 rounded-lg border border-twitterBorder
+                           focus:outline-none focus:ring-2 focus:ring-twitterBlue
+                           focus:border-transparent"
                 >
             </div>
 
             <button
-                class="w-full bg-cyberaccent text-black font-bold py-2 rounded hover:bg-white transition-all duration-300">
-                ROLL IN
+                class="w-full bg-twitterBlue text-white font-semibold py-2.5 rounded-full
+                       hover:bg-[#1a8cd8] transition">
+                Log In
             </button>
         </form>
 
         <!-- CREATE ACCOUNT -->
-        <form method="GET" action="/new-guy-page" class="mt-6 text-center">
-            <button
-                class="text-cyberaccent hover:text-white underline transition-all">
-                Create Account
-            </button>
-        </form>
+        <div class="mt-6 text-center">
+            <form method="GET" action="/new-guy-page">
+                <button
+                    class="text-twitterBlue font-medium hover:underline">
+                    Create Account
+                </button>
+            </form>
+        </div>
 
     </div>
 
