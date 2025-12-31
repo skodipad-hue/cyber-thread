@@ -169,27 +169,20 @@
 
 </div>
 
-<!-- ✅ DRAG & DROP FIX SCRIPT -->
+<!-- DRAG & DROP SCRIPT -->
 <script>
   const dropBox = document.getElementById("profileDrop");
   const fileInput = document.getElementById("profileInput");
 
-  // Click opens file picker
   dropBox.addEventListener("click", () => fileInput.click());
-
-  // Drag over
-  dropBox.addEventListener("dragover", (e) => {
+  dropBox.addEventListener("dragover", e => {
     e.preventDefault();
     dropBox.classList.add("bg-twitterHover", "dark:bg-white/5");
   });
-
-  // Drag leave
   dropBox.addEventListener("dragleave", () => {
     dropBox.classList.remove("bg-twitterHover", "dark:bg-white/5");
   });
-
-  // Drop file
-  dropBox.addEventListener("drop", (e) => {
+  dropBox.addEventListener("drop", e => {
     e.preventDefault();
     fileInput.files = e.dataTransfer.files;
     dropBox.classList.remove("bg-twitterHover", "dark:bg-white/5");

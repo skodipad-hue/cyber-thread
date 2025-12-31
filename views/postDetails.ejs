@@ -35,11 +35,12 @@
   </script>
 </head>
 
-<body class="bg-twitterBg dark:bg-darkBg text-twitterText dark:text-darkText min-h-screen font-sans antialiased">
+<body class="bg-twitterBg dark:bg-darkBg text-twitterText dark:text-darkText
+             min-h-screen font-sans antialiased">
 
-<!-- THEME TOGGLE (TOP RIGHT) -->
+<!-- 🌞🌙 THEME TOGGLE -->
 <button id="themeToggle"
-  class="fixed top-6 right-6 p-2 rounded-full
+  class="fixed top-4 sm:top-6 right-4 sm:right-6 p-2 rounded-full
          hover:bg-twitterHover dark:hover:bg-white/10
          transition shadow-sm z-50">
 
@@ -49,34 +50,43 @@
 
 <!-- BACK -->
 <a href="/users/<%= post.user_id %>/posts"
-   class="inline-flex items-center gap-2 m-6 px-4 py-2
+   class="inline-flex items-center gap-2
+          m-4 sm:m-6 px-4 py-2
           bg-twitterBlue text-white rounded-full
-          font-semibold shadow-sm hover:bg-[#1a8cd8] transition">
+          font-semibold shadow-sm
+          hover:bg-[#1a8cd8] transition">
   ← Back
 </a>
 
-<div class="max-w-3xl mx-auto bg-twitterCard dark:bg-darkCard
-            p-8 rounded-2xl border border-twitterBorder dark:border-darkBorder
-            shadow-sm">
+<!-- CONTENT -->
+<div class="max-w-3xl mx-auto
+            bg-twitterCard dark:bg-darkCard
+            p-6 sm:p-8
+            rounded-2xl
+            border border-twitterBorder dark:border-darkBorder
+            shadow-sm
+            mx-4 sm:mx-auto">
 
   <!-- USER HEADER -->
-  <div class="flex items-center gap-5 mb-6">
+  <div class="flex items-center gap-4 sm:gap-5 mb-6">
 
     <!-- PROFILE IMAGE -->
-    <div class="w-16 h-16 rounded-full overflow-hidden
+    <div class="w-14 h-14 sm:w-16 sm:h-16
+                rounded-full overflow-hidden
                 border border-twitterBorder dark:border-darkBorder
                 bg-gray-100 dark:bg-darkBg">
       <% if (post.profile_url) { %>
         <img src="<%= post.profile_url %>" class="w-full h-full object-cover">
       <% } else { %>
-        <div class="w-full h-full flex items-center justify-center text-twitterMuted dark:text-darkMuted text-xs">
+        <div class="w-full h-full flex items-center justify-center
+                    text-twitterMuted dark:text-darkMuted text-xs">
           No Image
         </div>
       <% } %>
     </div>
 
     <div>
-      <h1 class="text-lg font-bold">
+      <h1 class="text-base sm:text-lg font-bold">
         @<%= post.username %>
       </h1>
       <p class="text-sm text-twitterMuted dark:text-darkMuted">
@@ -99,7 +109,8 @@
 
   <!-- POST CONTENT -->
   <div class="bg-twitterHover dark:bg-white/5
-              p-6 rounded-xl
+              p-5 sm:p-6
+              rounded-xl
               border border-twitterBorder dark:border-darkBorder">
 
     <p class="text-[15px] leading-relaxed break-words">
