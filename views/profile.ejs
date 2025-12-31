@@ -29,7 +29,7 @@
       <% } %>
     </div>
 
-    <!-- UPLOAD PROFILE IMAGE (DRAG & DROP KEPT) -->
+    <!-- UPLOAD PROFILE IMAGE -->
     <form action="/profile/<%= user.id %>/photo"
           method="POST"
           enctype="multipart/form-data"
@@ -80,22 +80,15 @@
     </form>
   </div>
 
-  <!-- CREATE POST (IMAGE DRAG & DROP REMOVED) -->
+  <!-- CREATE POST (TEXT ONLY) -->
   <form action="/users/<%= user.id %>/posts"
         method="POST"
-        enctype="multipart/form-data"
         class="mb-10">
 
     <textarea name="content"
       class="w-full bg-black border border-cyan-400/30 rounded p-3 mb-3 text-gray-200"
       placeholder="What's on your mind?"
       required></textarea>
-
-    <!-- OPTIONAL: SIMPLE FILE INPUT (NO DRAG & DROP) -->
-    <input type="file"
-           name="image"
-           accept="image/*"
-           class="mb-3 text-gray-300">
 
     <button class="px-6 py-2 bg-cyan-400 text-black rounded font-bold">
       Post
@@ -109,11 +102,6 @@
       <p class="text-gray-300 mb-2 whitespace-pre-wrap">
         <%= post.content %>
       </p>
-
-      <% if (post.url) { %>
-        <img src="<%= post.url %>"
-             class="rounded-lg mb-3 max-h-64 shadow">
-      <% } %>
 
       <p class="text-gray-500 text-sm mb-3">
         <%= post.timeAgo %>
@@ -146,29 +134,25 @@
 
 <!-- DRAG & DROP SCRIPT (PROFILE ONLY) -->
 <script>
-  function setupDrag(boxId, inputId) {
-    const box = document.getElementById(boxId);
-    const input = document.getElementById(inputId);
+  const box = document.getElementById("profileDrop");
+  const input = document.getElementById("profileInput");
 
-    box.onclick = () => input.click();
+  box.onclick = () => input.click();
 
-    box.addEventListener("dragover", e => {
-      e.preventDefault();
-      box.classList.add("bg-cyan-400/10");
-    });
+  box.addEventListener("dragover", e => {
+    e.preventDefault();
+    box.classList.add("bg-cyan-400/10");
+  });
 
-    box.addEventListener("dragleave", () => {
-      box.classList.remove("bg-cyan-400/10");
-    });
+  box.addEventListener("dragleave", () => {
+    box.classList.remove("bg-cyan-400/10");
+  });
 
-    box.addEventListener("drop", e => {
-      e.preventDefault();
-      input.files = e.dataTransfer.files;
-      box.classList.remove("bg-cyan-400/10");
-    });
-  }
-
-  setupDrag("profileDrop", "profileInput");
+  box.addEventListener("drop", e => {
+    e.preventDefault();
+    input.files = e.dataTransfer.files;
+    box.classList.remove("bg-cyan-400/10");
+  });
 </script>
 
 </body>
