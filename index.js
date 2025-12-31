@@ -49,7 +49,13 @@ db.query("SELECT 1", (err) => {
 function timeAgo(date) {
   if (!date) return "just now";
 
-  const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
+  const postTime = new Date(date);
+  if (isNaN(postTime.getTime())) return "just now";
+
+  let seconds = Math.floor((Date.now() - postTime.getTime()) / 1000);
+
+  // Handle future timestamps
+  if (seconds < 0) seconds = Math.abs(seconds);
 
   if (seconds < 60) return "just now";
 
@@ -62,7 +68,6 @@ function timeAgo(date) {
   const days = Math.floor(hours / 24);
   return `${days} day${days !== 1 ? "s" : ""} ago`;
 }
-
 
 /* ================= LOGIN ================= */
 app.get("/", (req, res) => res.redirect("/login"));
@@ -103,6 +108,10 @@ app.get("/users/:id/posts", (req, res) => {
      FROM posts JOIN users ON posts.user_id = users.id
      ORDER BY posts.created_at DESC`,
     (err, posts) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).send("Database error");
+      }
       posts.forEach(p => p.timeAgo = timeAgo(p.created_at));
       res.render("feed", { posts, userId });
     }
@@ -133,7 +142,6 @@ app.post("/users/:id/posts", upload.single("image"), async (req, res) => {
 });
 
 /* ================= PROFILE ================= */
-/* ================= PROFILE ================= */
 app.get("/profile/:id", (req, res) => {
   const userId = req.params.id;
 
@@ -163,8 +171,7 @@ app.get("/profile/:id", (req, res) => {
   );
 });
 
-
-/* ================= UPDATE BIO (🔥 FIX) ================= */
+/* ================= UPDATE BIO ================= */
 app.post("/profile/:id", (req, res) => {
   const userId = req.params.id;
   const { bio } = req.body;
@@ -176,8 +183,7 @@ app.post("/profile/:id", (req, res) => {
   );
 });
 
-//edit route in profile
-
+/* ================= EDIT POST ================= */
 app.put("/posts/:id", (req, res) => {
   const { id } = req.params;
   const { content, userId } = req.body;
@@ -195,10 +201,7 @@ app.put("/posts/:id", (req, res) => {
   );
 });
 
-
-
-//delete route in profile
-
+/* ================= DELETE POST ================= */
 app.delete("/posts/:id", (req, res) => {
   const { id } = req.params;
   const { userId } = req.body;
@@ -216,11 +219,6 @@ app.delete("/posts/:id", (req, res) => {
   );
 });
 
-
-//post details page 
-
-/* ================= POST DETAILS ================= */
-/* ================= POST DETAILS ================= */
 /* ================= POST DETAILS ================= */
 app.get("/posts/:id", (req, res) => {
   const postId = req.params.id;
@@ -252,64 +250,42 @@ app.get("/posts/:id", (req, res) => {
     }
 
     const post = rows[0];
-
-    post.created_at = post.created_at
-      ? new Date(post.created_at)
-      : new Date();
-
+    post.created_at = post.created_at ? new Date(post.created_at) : new Date();
     post.timeAgo = timeAgo(post.created_at);
 
     res.render("postDetails", { post });
   });
 });
 
-//profile photo upload
-
 /* ================= UPDATE PROFILE PHOTO ================= */
-/* ================= UPDATE PROFILE PHOTO ================= */
-app.post(
-  "/profile/:id/photo",
-  upload.single("profileImage"),
-  async (req, res) => {
-    const userId = req.params.id;
+app.post("/profile/:id/photo", upload.single("profileImage"), async (req, res) => {
+  const userId = req.params.id;
 
-    if (!req.file) {
-      return res.redirect(`/profile/${userId}`);
-    }
-
-    try {
-      const fileData = fs.readFileSync(req.file.path);
-
-      const uploaded = await imagekit.upload({
-        file: fileData,
-        fileName: req.file.originalname,
-        folder: "profile_photos"
-      });
-
-      fs.unlinkSync(req.file.path);
-
-      db.query(
-        "UPDATE users SET profile_url=? WHERE id=?",
-        [uploaded.url, userId],
-        () => res.redirect(`/profile/${userId}`)
-      );
-    } catch (err) {
-      console.error("❌ Profile image upload failed:", err);
-      res.redirect(`/profile/${userId}`);
-    }
+  if (!req.file) {
+    return res.redirect(`/profile/${userId}`);
   }
-);
 
+  try {
+    const fileData = fs.readFileSync(req.file.path);
 
+    const uploaded = await imagekit.upload({
+      file: fileData,
+      fileName: req.file.originalname,
+      folder: "profile_photos"
+    });
 
+    fs.unlinkSync(req.file.path);
 
-
-
-
-
-
-
-
+    db.query(
+      "UPDATE users SET profile_url=? WHERE id=?",
+      [uploaded.url, userId],
+      () => res.redirect(`/profile/${userId}`)
+    );
+  } catch (err) {
+    console.error("❌ Profile image upload failed:", err);
+    res.redirect(`/profile/${userId}`);
+  }
+});
 
 /* ================= START SERVER ================= */
 const PORT = process.env.PORT || 8080;
