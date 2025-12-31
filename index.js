@@ -178,18 +178,21 @@ app.put("/posts/:id", (req, res) => {
 
 /* ================= DELETE POST ================= */
 /* ================= DELETE POST (NO REDIRECT) ================= */
+/* ================= DELETE POST (AJAX – NO REDIRECT) ================= */
 app.delete("/posts/:id", (req, res) => {
   db.query(
     "DELETE FROM posts WHERE id=?",
     [req.params.id],
     (err) => {
       if (err) {
+        console.error(err);
         return res.status(500).json({ success: false });
       }
-      res.json({ success: true });
+      return res.json({ success: true });
     }
   );
 });
+
 
 
 /* ================= POST DETAILS ================= */
