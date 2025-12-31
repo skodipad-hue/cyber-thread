@@ -88,7 +88,7 @@
         <p class="text-twitterMuted dark:text-darkMuted text-sm">
           Click or drag & drop
         </p>
-        <input type="file" name="profileImage" id="profileInput" hidden>
+        <input type="file" name="profileImage" id="profileInput" accept="image/*" hidden>
       </div>
 
       <button class="mt-3 px-6 py-2 bg-twitterBlue text-white rounded-full font-semibold">
@@ -137,10 +137,7 @@
       <p class="mb-2 whitespace-pre-wrap"><%= post.content %></p>
       <p class="text-xs text-twitterMuted dark:text-darkMuted mb-4"><%= post.timeAgo %></p>
 
-      <!-- ACTIONS -->
       <div class="flex justify-end items-center gap-3">
-
-        <!-- EDIT -->
         <form action="/posts/<%= post.id %>?_method=PUT" method="POST">
           <input type="hidden" name="userId" value="<%= user.id %>">
           <input type="hidden" name="content" value="<%= post.content %>">
@@ -149,7 +146,6 @@
           </button>
         </form>
 
-        <!-- DELETE BIN -->
         <form action="/posts/<%= post.id %>?_method=DELETE" method="POST">
           <input type="hidden" name="userId" value="<%= user.id %>">
           <button class="p-2 rounded-full hover:bg-red-500/10 transition" title="Delete">
@@ -166,7 +162,6 @@
             </svg>
           </button>
         </form>
-
       </div>
 
     </div>
@@ -174,6 +169,34 @@
 
 </div>
 
+<!-- ✅ DRAG & DROP FIX SCRIPT -->
+<script>
+  const dropBox = document.getElementById("profileDrop");
+  const fileInput = document.getElementById("profileInput");
+
+  // Click opens file picker
+  dropBox.addEventListener("click", () => fileInput.click());
+
+  // Drag over
+  dropBox.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropBox.classList.add("bg-twitterHover", "dark:bg-white/5");
+  });
+
+  // Drag leave
+  dropBox.addEventListener("dragleave", () => {
+    dropBox.classList.remove("bg-twitterHover", "dark:bg-white/5");
+  });
+
+  // Drop file
+  dropBox.addEventListener("drop", (e) => {
+    e.preventDefault();
+    fileInput.files = e.dataTransfer.files;
+    dropBox.classList.remove("bg-twitterHover", "dark:bg-white/5");
+  });
+</script>
+
+<!-- THEME SCRIPT -->
 <script>
   const html = document.documentElement;
   const toggle = document.getElementById("themeToggle");
