@@ -37,7 +37,7 @@
 </head>
 
 <body class="bg-twitterBg dark:bg-darkBg text-twitterText dark:text-darkText
-             min-h-screen flex items-center justify-center antialiased">
+             min-h-screen flex flex-col items-center justify-center antialiased">
 
     <!-- THEME TOGGLE (TOP RIGHT) -->
     <button id="themeToggle"
@@ -48,14 +48,21 @@
         <span id="moon" class="text-lg hidden">🌙</span>
     </button>
 
+    <!-- 🔵 CYBER THREADS (CENTER ALIGNED) -->
+    <h1 class="mb-8 text-3xl font-extrabold tracking-widest
+               text-twitterBlue uppercase text-center">
+        CYBER THREADS
+    </h1>
+
+    <!-- REGISTER CARD -->
     <div class="w-full max-w-md
                 bg-twitterCard dark:bg-darkCard
                 border border-twitterBorder dark:border-darkBorder
                 rounded-2xl p-8 shadow-sm">
 
-        <h1 class="text-2xl font-bold text-center text-twitterBlue mb-6 tracking-tight">
+        <h2 class="text-2xl font-bold text-center mb-6 tracking-tight">
             Join In
-        </h1>
+        </h2>
 
         <!-- REGISTER FORM -->
         <form method="POST" action="/register" class="space-y-5">

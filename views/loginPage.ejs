@@ -36,9 +36,10 @@
     </script>
 </head>
 
-<body class="bg-twitterBg dark:bg-darkBg text-twitterText dark:text-darkText min-h-screen flex items-center justify-center antialiased">
+<body class="bg-twitterBg dark:bg-darkBg text-twitterText dark:text-darkText
+             min-h-screen flex flex-col items-center justify-center antialiased">
 
-    <!-- THEME TOGGLE (TOP RIGHT) -->
+    <!-- 🌞🌙 THEME TOGGLE (TOP RIGHT) -->
     <button id="themeToggle"
         class="fixed top-6 right-6 p-2 rounded-full
                hover:bg-twitterHover dark:hover:bg-white/10
@@ -48,14 +49,21 @@
         <span id="moon" class="text-lg hidden">🌙</span>
     </button>
 
+    <!-- 🔵 CYBER THREADS HEADING -->
+    <h1 class="mb-8 text-3xl font-extrabold tracking-widest
+               text-twitterBlue uppercase">
+        CYBER THREADS
+    </h1>
+
+    <!-- LOGIN CARD -->
     <div class="bg-twitterCard dark:bg-darkCard
                 w-full max-w-md p-8 rounded-2xl
                 border border-twitterBorder dark:border-darkBorder
                 shadow-sm">
 
-        <h1 class="text-2xl font-bold text-center text-twitterBlue mb-6 tracking-tight">
+        <h2 class="text-2xl font-bold text-center mb-6 tracking-tight">
             Step into Feed
-        </h1>
+        </h2>
 
         <!-- LOGIN FORM -->
         <form method="POST" action="/login" class="space-y-5">
