@@ -49,14 +49,16 @@ db.query("SELECT 1", (err) => {
 function timeAgo(date) {
   if (!date) return "just now";
 
-  const postTime = new Date(date);
+  // Force ISO format for MySQL DATETIME
+  const postTime = new Date(
+    typeof date === "string" ? date.replace(" ", "T") : date
+  );
+
   if (isNaN(postTime.getTime())) return "just now";
 
   let seconds = Math.floor((Date.now() - postTime.getTime()) / 1000);
 
-  // Handle future timestamps
   if (seconds < 0) seconds = Math.abs(seconds);
-
   if (seconds < 60) return "just now";
 
   const minutes = Math.floor(seconds / 60);
@@ -68,6 +70,7 @@ function timeAgo(date) {
   const days = Math.floor(hours / 24);
   return `${days} day${days !== 1 ? "s" : ""} ago`;
 }
+
 
 /* ================= LOGIN ================= */
 app.get("/", (req, res) => res.redirect("/login"));
