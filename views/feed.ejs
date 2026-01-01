@@ -47,16 +47,24 @@ tailwind.config = {
       Logout
     </a>
 
-    <!-- CENTER TITLE -->
+    <!-- CENTER TITLE (DESKTOP) -->
     <h1
       class="hidden sm:block text-xl font-bold text-twitterBlue uppercase tracking-wider">
       CYBER THREADS
     </h1>
 
-    <!-- RIGHT SIDE (DESKTOP TOGGLE + PROFILE) -->
-    <div class="hidden sm:flex items-center gap-4">
+    <!-- RIGHT: PROFILE + TOGGLE (DESKTOP) -->
+    <div class="hidden sm:flex items-center gap-3">
 
-      <!-- DESKTOP TOGGLE (TOP RIGHT) -->
+      <!-- PROFILE -->
+      <a href="/profile/<%= userId %>"
+         style="padding:12px 18px;font-size:15px"
+         class="bg-twitterBlue text-white rounded-full font-semibold
+                hover:bg-[#1a8cd8] transition">
+        Profile
+      </a>
+
+      <!-- DESKTOP TOGGLE (AFTER PROFILE) -->
       <button id="themeToggleDesktop"
         class="p-2 rounded-full
                hover:bg-twitterHover
@@ -66,18 +74,11 @@ tailwind.config = {
         <span class="moon text-lg hidden">🌙</span>
       </button>
 
-      <!-- PROFILE -->
-      <a href="/profile/<%= userId %>"
-         style="padding:12px 18px;font-size:15px"
-         class="bg-twitterBlue text-white rounded-full font-semibold
-                hover:bg-[#1a8cd8] transition">
-        Profile
-      </a>
     </div>
 
   </div>
 
-  <!-- ===== MOBILE HEADER TITLE (STACKED) ===== -->
+  <!-- ===== MOBILE TITLE (STACKED) ===== -->
   <div class="sm:hidden text-center py-2">
     <div style="font-size:24px;letter-spacing:2px"
          class="font-bold text-twitterBlue uppercase">
