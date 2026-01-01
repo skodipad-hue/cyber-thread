@@ -52,18 +52,30 @@ tailwind.config = {
       Logout
     </a>
 
-    <!-- CENTER: TITLE -->
-    <div class="text-center leading-tight">
+    <!-- CENTER: TITLE + TOGGLE (DESKTOP ONLY) -->
+    <div class="text-center leading-tight flex flex-col items-center gap-1">
+
       <div
         style="font-size:24px;letter-spacing:2px"
         class="sm:text-xl font-bold text-twitterBlue uppercase">
         CYBER
       </div>
+
       <div
         style="font-size:20px;letter-spacing:2px"
         class="sm:text-sm font-semibold text-twitterBlue uppercase">
         THREADS
       </div>
+
+      <!-- DESKTOP TOGGLE -->
+      <button id="themeToggleDesktop"
+        class="hidden sm:flex mt-2 p-2 rounded-full
+               hover:bg-twitterHover dark:hover:bg-white/10
+               transition">
+        <span class="sun text-lg">☀️</span>
+        <span class="moon text-lg hidden">🌙</span>
+      </button>
+
     </div>
 
     <!-- RIGHT: PROFILE -->
@@ -119,8 +131,8 @@ tailwind.config = {
 
 </section>
 
-<!-- ================= FLOATING THEME TOGGLE (MOBILE ONLY) ================= -->
-<button id="themeToggle"
+<!-- ================= FLOATING TOGGLE (MOBILE ONLY) ================= -->
+<button id="themeToggleMobile"
   class="fixed bottom-6 right-6 z-50
          sm:hidden
          p-3 rounded-full
@@ -129,29 +141,34 @@ tailwind.config = {
          dark:hover:bg-white/10
          transition shadow-md">
 
-  <span id="sun" style="font-size:22px">☀️</span>
-  <span id="moon" style="font-size:22px" class="hidden">🌙</span>
+  <span class="sun text-xl">☀️</span>
+  <span class="moon text-xl hidden">🌙</span>
 </button>
 
 <!-- ================= THEME SCRIPT ================= -->
 <script>
 const html = document.documentElement;
-const sun = document.getElementById("sun");
-const moon = document.getElementById("moon");
-const toggle = document.getElementById("themeToggle");
+const allSun = document.querySelectorAll(".sun");
+const allMoon = document.querySelectorAll(".moon");
+
+function syncIcons(isDark) {
+  allSun.forEach(s => s.classList.toggle("hidden", isDark));
+  allMoon.forEach(m => m.classList.toggle("hidden", !isDark));
+}
 
 if (localStorage.theme === "dark") {
   html.classList.add("dark");
-  sun.classList.add("hidden");
-  moon.classList.remove("hidden");
+  syncIcons(true);
 }
 
-toggle.onclick = () => {
+function toggleTheme() {
   const isDark = html.classList.toggle("dark");
-  sun.classList.toggle("hidden", isDark);
-  moon.classList.toggle("hidden", !isDark);
+  syncIcons(isDark);
   localStorage.theme = isDark ? "dark" : "light";
-};
+}
+
+document.getElementById("themeToggleDesktop").onclick = toggleTheme;
+document.getElementById("themeToggleMobile").onclick = toggleTheme;
 </script>
 
 </body>
