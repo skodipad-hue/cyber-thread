@@ -52,7 +52,7 @@ tailwind.config = {
       Logout
     </a>
 
-    <!-- CENTER: TITLE (STACKED) -->
+    <!-- CENTER: TITLE -->
     <div class="text-center leading-tight">
       <div
         style="font-size:24px;letter-spacing:2px"
@@ -92,7 +92,6 @@ tailwind.config = {
 
       <a href="/posts/<%= post.id %>" class="block">
 
-        <!-- POST HEADER -->
         <div style="padding:18px 20px 10px"
              class="flex justify-between items-start">
           <h3 style="font-size:18px" class="font-semibold">
@@ -104,7 +103,6 @@ tailwind.config = {
           </small>
         </div>
 
-        <!-- POST CONTENT -->
         <div style="padding:0 20px 20px">
           <p style="font-size:18px;line-height:28px">
             <%= post.content %>
@@ -120,6 +118,41 @@ tailwind.config = {
   <% }) %>
 
 </section>
+
+<!-- ================= FLOATING THEME TOGGLE (MOBILE ONLY) ================= -->
+<button id="themeToggle"
+  class="fixed bottom-6 right-6 z-50
+         sm:hidden
+         p-3 rounded-full
+         bg-transparent
+         hover:bg-twitterHover
+         dark:hover:bg-white/10
+         transition shadow-md">
+
+  <span id="sun" style="font-size:22px">☀️</span>
+  <span id="moon" style="font-size:22px" class="hidden">🌙</span>
+</button>
+
+<!-- ================= THEME SCRIPT ================= -->
+<script>
+const html = document.documentElement;
+const sun = document.getElementById("sun");
+const moon = document.getElementById("moon");
+const toggle = document.getElementById("themeToggle");
+
+if (localStorage.theme === "dark") {
+  html.classList.add("dark");
+  sun.classList.add("hidden");
+  moon.classList.remove("hidden");
+}
+
+toggle.onclick = () => {
+  const isDark = html.classList.toggle("dark");
+  sun.classList.toggle("hidden", isDark);
+  moon.classList.toggle("hidden", !isDark);
+  localStorage.theme = isDark ? "dark" : "light";
+};
+</script>
 
 </body>
 </html>
