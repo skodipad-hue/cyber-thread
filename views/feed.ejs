@@ -37,57 +37,57 @@ tailwind.config = {
 
 <!-- ================= HEADER ================= -->
 <header class="bg-white dark:bg-darkBg border-b border-twitterBorder dark:border-darkBorder">
-  <div class="max-w-7xl mx-auto px-4 py-5 sm:py-4 flex items-center justify-between">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
 
-    <!-- LEFT: LOGOUT -->
+    <!-- LEFT -->
     <a href="/login"
        style="padding:12px 18px;font-size:15px"
-       class="bg-red-500 text-white rounded-full font-semibold
-              hover:bg-red-400 transition">
+       class="bg-red-500 text-white rounded-full font-semibold hover:bg-red-400 transition">
       Logout
     </a>
 
-    <!-- CENTER TITLE (DESKTOP) -->
-    <h1
-      class="hidden sm:block text-xl font-bold text-twitterBlue uppercase tracking-wider">
-      CYBER THREADS
-    </h1>
+    <!-- CENTER TITLE -->
+    <div class="text-center">
+      <div class="hidden sm:block text-xl font-bold text-twitterBlue uppercase tracking-wider">
+        CYBER THREADS
+      </div>
 
-    <!-- RIGHT: PROFILE + TOGGLE (DESKTOP) -->
-    <div class="hidden sm:flex items-center gap-3">
+      <!-- MOBILE STACKED -->
+      <div class="sm:hidden">
+        <div style="font-size:24px;letter-spacing:2px"
+             class="font-bold text-twitterBlue uppercase">
+          CYBER
+        </div>
+        <div style="font-size:20px;letter-spacing:2px"
+             class="font-semibold text-twitterBlue uppercase">
+          THREADS
+        </div>
+      </div>
+    </div>
 
-      <!-- PROFILE -->
+    <!-- RIGHT (DESKTOP) -->
+    <div class="hidden sm:flex items-center gap-4">
       <a href="/profile/<%= userId %>"
          style="padding:12px 18px;font-size:15px"
-         class="bg-twitterBlue text-white rounded-full font-semibold
-                hover:bg-[#1a8cd8] transition">
+         class="bg-twitterBlue text-white rounded-full font-semibold hover:bg-[#1a8cd8] transition">
         Profile
       </a>
 
-      <!-- DESKTOP TOGGLE (AFTER PROFILE) -->
+      <!-- TOGGLE AT EXTREME RIGHT -->
       <button id="themeToggleDesktop"
-        class="p-2 rounded-full
-               hover:bg-twitterHover
-               dark:hover:bg-white/10
-               transition">
+        class="p-2 rounded-full hover:bg-twitterHover dark:hover:bg-white/10 transition">
         <span class="sun text-lg">☀️</span>
         <span class="moon text-lg hidden">🌙</span>
       </button>
-
     </div>
 
-  </div>
+    <!-- RIGHT (MOBILE PROFILE) -->
+    <a href="/profile/<%= userId %>"
+       style="padding:12px 18px;font-size:15px"
+       class="sm:hidden bg-twitterBlue text-white rounded-full font-semibold hover:bg-[#1a8cd8] transition">
+      Profile
+    </a>
 
-  <!-- ===== MOBILE TITLE (STACKED) ===== -->
-  <div class="sm:hidden text-center py-2">
-    <div style="font-size:24px;letter-spacing:2px"
-         class="font-bold text-twitterBlue uppercase">
-      CYBER
-    </div>
-    <div style="font-size:20px;letter-spacing:2px"
-         class="font-semibold text-twitterBlue uppercase">
-      THREADS
-    </div>
   </div>
 </header>
 
@@ -104,8 +104,7 @@ tailwind.config = {
 
       <a href="/posts/<%= post.id %>" class="block">
 
-        <div style="padding:18px 20px 10px"
-             class="flex justify-between items-start">
+        <div style="padding:18px 20px 10px" class="flex justify-between items-start">
           <h3 style="font-size:18px" class="font-semibold">
             @<%= post.username %>
           </h3>
@@ -131,7 +130,7 @@ tailwind.config = {
 
 </section>
 
-<!-- ================= FLOATING TOGGLE (MOBILE ONLY) ================= -->
+<!-- ================= FLOATING TOGGLE (MOBILE) ================= -->
 <button id="themeToggleMobile"
   class="fixed bottom-6 right-6 z-50 sm:hidden
          p-3 rounded-full bg-transparent
@@ -148,19 +147,19 @@ const html = document.documentElement;
 const suns = document.querySelectorAll(".sun");
 const moons = document.querySelectorAll(".moon");
 
-function syncIcons(isDark) {
+function sync(isDark){
   suns.forEach(s => s.classList.toggle("hidden", isDark));
   moons.forEach(m => m.classList.toggle("hidden", !isDark));
 }
 
 if (localStorage.theme === "dark") {
   html.classList.add("dark");
-  syncIcons(true);
+  sync(true);
 }
 
-function toggleTheme() {
+function toggleTheme(){
   const isDark = html.classList.toggle("dark");
-  syncIcons(isDark);
+  sync(isDark);
   localStorage.theme = isDark ? "dark" : "light";
 }
 
